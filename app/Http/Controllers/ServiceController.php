@@ -10,7 +10,8 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::all();
-        return view('welcome', compact('services'));
+        $members = \App\Models\Member::all();
+        return view('welcome', compact('services', 'members'));
     }
 
     public function store(Request $request)
