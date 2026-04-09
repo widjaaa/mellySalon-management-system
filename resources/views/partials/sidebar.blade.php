@@ -11,7 +11,7 @@
     <div class="logo-sub">Management System</div>
   </div>
   <nav class="nav">
-    <div class="ni active" onclick="goPage('dashboard',this)">
+    <div class="ni active" onclick="SalonApp.goPage('dashboard',this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="7" height="7" />
         <rect x="14" y="3" width="7" height="7" />
@@ -20,14 +20,14 @@
       </svg>
       Dashboard
     </div>
-    <div class="ni" onclick="goPage('payment',this)">
+    <div class="ni" onclick="SalonApp.goPage('payment',this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="1" y="4" width="22" height="16" rx="2" />
         <line x1="1" y1="10" x2="23" y2="10" />
       </svg>
       Pembayaran
     </div>
-    <div class="ni" onclick="goPage('members',this)">
+    <div class="ni" onclick="SalonApp.goPage('members',this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
@@ -36,13 +36,13 @@
       </svg>
       Data Member
     </div>
-    <div class="ni" onclick="goPage('services',this)">
+    <div class="ni" onclick="SalonApp.goPage('services',this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
       Kelola Layanan
     </div>
-    <div class="ni" onclick="goPage('report',this)">
+    <div class="ni" onclick="SalonApp.goPage('report',this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
@@ -50,7 +50,7 @@
       </svg>
       Laporan
     </div>
-    <div class="ni" onclick="goPage('history',this)">
+    <div class="ni" onclick="SalonApp.goPage('history',this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />

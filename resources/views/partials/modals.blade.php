@@ -20,8 +20,8 @@
     </div>
     <div class="form-row"><div class="fl">Deskripsi</div><textarea id="f-desc" placeholder="Deskripsi singkat layanan..."></textarea></div>
     <div class="modal-actions">
-      <button class="btn-out" onclick="closeSvcModal()">Batal</button>
-      <button class="btn-pri" onclick="saveSvc()">Simpan</button>
+      <button class="btn-out" onclick="SalonApp.closeServiceModal()">Batal</button>
+      <button class="btn-pri" onclick="SalonApp.saveService()">Simpan</button>
     </div>
   </div>
 </div>
@@ -32,8 +32,8 @@
     <div class="modal-title">Hapus Layanan?</div>
     <div style="font-size:12.5px;color:var(--text2);margin-bottom:1rem">Layanan <strong id="del-name"></strong> akan dihapus. Lanjutkan?</div>
     <div class="modal-actions">
-      <button class="btn-out" onclick="closeDelModal()">Batal</button>
-      <button class="btn-del-sm" style="padding:8px 14px" onclick="confirmDel()">Hapus</button>
+      <button class="btn-out" onclick="SalonApp.closeDeleteModal()">Batal</button>
+      <button class="btn-del-sm" style="padding:8px 14px" onclick="SalonApp.confirmDeleteService()">Hapus</button>
     </div>
   </div>
 </div>
@@ -57,8 +57,8 @@
       <div class="form-row"><div class="fl">Tanggal Lahir</div><input type="text" id="m-bday" placeholder="cth: 12 Mar"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-out" onclick="closeMemModal()">Batal</button>
-      <button class="btn-pri" onclick="saveMember()">Simpan</button>
+      <button class="btn-out" onclick="SalonApp.closeMemberModal()">Batal</button>
+      <button class="btn-pri" onclick="SalonApp.saveMember()">Simpan</button>
     </div>
   </div>
 </div>

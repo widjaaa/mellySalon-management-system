@@ -4,7 +4,7 @@
           <div style="font-size:13px;font-weight:500">Kelola Layanan</div>
           <div style="font-size:10px;color:var(--text3);margin-top:2px" id="svc-sub"></div>
         </div>
-        <button class="btn-pri" onclick="openSvcModal()">+ Tambah Layanan</button>
+        <button class="btn-pri" onclick="SalonApp.openServiceModal()">+ Tambah Layanan</button>
       </div>
       <div class="summary-bar">
         <div class="sm"><div class="sm-val" id="ss-total">0</div><div class="sm-lbl">Total Layanan</div></div>

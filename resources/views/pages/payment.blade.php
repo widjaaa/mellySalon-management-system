@@ -6,7 +6,7 @@
       <div class="form-row">
         <div class="fl">Nama Pelanggan</div>
         <input type="text" id="cust-name" list="members-list" placeholder="Ketik nama atau cari member..."
-          oninput="searchMember()">
+          oninput="SalonApp.searchMember()">
         <datalist id="members-list"></datalist>
         <div class="hint-member" id="member-hint"></div>
       </div>
@@ -16,7 +16,7 @@
           <option value="">-- Pilih Layanan --</option>
         </select>
       </div>
-      <button class="btn-out full" style="margin-bottom:10px" onclick="addSvc()">+ Tambah Layanan</button>
+      <button class="btn-out full" style="margin-bottom:10px" onclick="SalonApp.addService()">+ Tambah Layanan</button>
       <div id="order-list"></div>
       <div class="order-total hidden" id="order-subtotal"><span>Subtotal</span><span id="sub-val">Rp 0</span></div>
       <div class="disc-row" id="disc-row"><span>Diskon Member</span><span id="disc-val"></span></div>
@@ -26,13 +26,13 @@
     <div class="card">
       <div class="ct">Metode Pembayaran</div>
       <div class="pay-methods">
-        <div class="pm sel" onclick="selPay(this,'Tunai')">
+        <div class="pm sel" onclick="SalonApp.selectPaymentMethod(this,'Tunai')">
           <div class="pm-icon">💵</div>Tunai
         </div>
-        <div class="pm" onclick="selPay(this,'QRIS')">
+        <div class="pm" onclick="SalonApp.selectPaymentMethod(this,'QRIS')">
           <div class="pm-icon">📱</div>QRIS
         </div>
-        <div class="pm" onclick="selPay(this,'Transfer')">
+        <div class="pm" onclick="SalonApp.selectPaymentMethod(this,'Transfer')">
           <div class="pm-icon">🏦</div>Transfer
         </div>
       </div>
@@ -40,11 +40,11 @@
       <div id="cash-section">
         <div class="form-row">
           <div class="fl">Uang Diterima</div>
-          <input type="number" id="cash-in" placeholder="0" oninput="calcChange()">
+          <input type="number" id="cash-in" placeholder="0" oninput="SalonApp.calculateChange()">
           <div class="quick-cash-row">
-            <button class="btn-quick-cash" onclick="setCash('pas')">Uang Pas</button>
-            <button class="btn-quick-cash" onclick="setCash(50000)">50.000</button>
-            <button class="btn-quick-cash" onclick="setCash(100000)">100.000</button>
+            <button class="btn-quick-cash" onclick="SalonApp.setCashAmount('pas')">Uang Pas</button>
+            <button class="btn-quick-cash" onclick="SalonApp.setCashAmount(50000)">50.000</button>
+            <button class="btn-quick-cash" onclick="SalonApp.setCashAmount(100000)">100.000</button>
           </div>
         </div>
         <div class="change-row" id="change-row">
@@ -70,14 +70,14 @@
           <div style="font-size:10.5px;color:var(--text3);margin-bottom:2px">BCA - Sanggar Melly Salon</div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-size:16px;font-weight:600;letter-spacing:1px">0123456789</div>
-            <button class="btn-copy" onclick="copyRek('0123456789')">Salin</button>
+            <button class="btn-copy" onclick="SalonApp.copyAccountNumber('0123456789')">Salin</button>
           </div>
         </div>
         <div class="bank-card">
           <div style="font-size:10.5px;color:var(--text3);margin-bottom:2px">Mandiri - Siti Aminah</div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-size:16px;font-weight:600;letter-spacing:1px">1330001122334</div>
-            <button class="btn-copy" onclick="copyRek('1330001122334')">Salin</button>
+            <button class="btn-copy" onclick="SalonApp.copyAccountNumber('1330001122334')">Salin</button>
           </div>
         </div>
         <div
@@ -85,7 +85,7 @@
           ℹ Pastikan pembayaran telah masuk sebelum klik proses.</div>
       </div>
       <div class="poin-preview" id="poin-preview"></div>
-      <button class="btn-pri full" onclick="doPayment()">Proses Pembayaran</button>
+      <button class="btn-pri full" onclick="SalonApp.processPayment()">Proses Pembayaran</button>
     </div>
   </div>
 </div>

@@ -1,13 +1,13 @@
 <div class="page" id="page-report">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;flex-wrap:wrap;gap:8px">
         <div class="tab-row" style="margin-bottom:0">
-          <button class="tab act" onclick="setReport('harian',this)">Harian</button>
-          <button class="tab" onclick="setReport('mingguan',this)">Mingguan</button>
-          <button class="tab" onclick="setReport('bulanan',this)">Bulanan</button>
+          <button class="tab act" onclick="SalonApp.setReportPeriod('harian',this)">Harian</button>
+          <button class="tab" onclick="SalonApp.setReportPeriod('mingguan',this)">Mingguan</button>
+          <button class="tab" onclick="SalonApp.setReportPeriod('bulanan',this)">Bulanan</button>
         </div>
         <div style="display:flex;gap:7px">
-          <button class="btn-exp" onclick="exportCSV()">⬇ Ekspor CSV</button>
-          <button class="btn-exp" onclick="printReport()">🖨 Cetak</button>
+          <button class="btn-exp" onclick="SalonApp.exportCSV()">⬇ Ekspor CSV</button>
+          <button class="btn-exp" onclick="SalonApp.printReport()">🖨 Cetak</button>
         </div>
       </div>
       <div class="g3 mb1" id="rep-summary"></div>
