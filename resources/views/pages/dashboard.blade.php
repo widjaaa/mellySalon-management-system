@@ -24,11 +24,13 @@
   <div class="g2">
     <div class="card">
       <div class="ct">Antrian Hari Ini</div>
-      <div style="text-align:center;padding:2rem 1rem;color:var(--text3);font-size:12.5px">Belum ada antrian hari ini.</div>
+      <div style="text-align:center;padding:2rem 1rem;color:var(--text3);font-size:12.5px">Belum ada antrian hari ini.
+      </div>
     </div>
     <div class="card">
       <div class="ct">Layanan Terpopuler</div>
-      <div style="text-align:center;padding:1.4rem 1rem;color:var(--text3);font-size:12.5px">Belum ada data layanan untuk ditampilkan.</div>
+      <div style="text-align:center;padding:1.4rem 1rem;color:var(--text3);font-size:12.5px">Belum ada data layanan
+        untuk ditampilkan.</div>
       <div style="margin-top:14px">
         <div class="ct" style="margin-bottom:7px">Pendapatan Minggu Ini</div>
         <div class="rev-chart" id="rev-chart"></div>
@@ -38,7 +40,8 @@
   <div class="card mb1">
     <div class="ct">Member Ulang Tahun Bulan Ini 🎂</div>
     <div class="birthday-row">
-      <div style="color:var(--text3);font-size:12.5px;padding:0.5rem">Tidak ada member yang berulang tahun bulan ini.</div>
+      <div style="color:var(--text3);font-size:12.5px;padding:0.5rem">Tidak ada member yang berulang tahun bulan ini.
+      </div>
     </div>
   </div>
 </div>
