@@ -1,3 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-purple: #9736c4;
+  --color-brand-purple-light: #f4e8fa;
+  --color-brand-purple-mid: #d8a4ef;
+  --color-brand-purple-dark: #621e85;
+
+  --color-brand-gold: #BA7517;
+  --color-brand-gold-light: #FAEEDA;
+  --color-brand-gold-mid: #FAC775;
+
+  --font-sans: "DM Sans", sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
 /**
  * =============================================================
  * Melly Salon Management System — Main Stylesheet
@@ -91,8 +107,7 @@
   --font-serif: 'Playfair Display', serif;
 }
 
-
-/* ==========================================================================
+/* ==========================================================================================================
    2. BASE / RESET
    ========================================================================== */
 

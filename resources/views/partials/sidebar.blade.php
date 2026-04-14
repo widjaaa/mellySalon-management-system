@@ -1,34 +1,39 @@
 <!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="logo">
-    <div class="logo-icon">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9736c4ff" stroke-width="2">
-        <path
-          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+<div class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 relative h-full shadow-sm z-20">
+  
+  <!-- Logo -->
+  <div class="p-6 border-b border-gray-100 flex flex-col items-center justify-center text-center py-8 bg-gradient-to-b from-white to-gray-50">
+    <div class="w-14 h-14 bg-brand-purple-light rounded-2xl flex items-center justify-center mb-4 text-brand-purple shadow-sm ring-4 ring-white">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
       </svg>
     </div>
-    <div class="logo-name">Sanggar Wedding Melly Salon</div>
-    <div class="logo-sub">Management System</div>
+    <div class="font-serif font-bold text-gray-900 leading-tight text-lg">Hanya Cantik</div>
+    <div class="text-[10px] text-gray-400 font-bold tracking-widest mt-1.5 uppercase">Melly Salon Mgt</div>
   </div>
-  <nav class="nav">
-    <div class="ni active" onclick="SalonApp.goPage('dashboard',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7" />
-        <rect x="14" y="3" width="7" height="7" />
-        <rect x="14" y="14" width="7" height="7" />
-        <rect x="3" y="14" width="7" height="7" />
+
+  <!-- Navigation -->
+  <nav class="flex-1 py-6 px-4 space-y-1.5 overflow-y-auto">
+    <div class="ni active w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium text-gray-500 cursor-pointer transition-all hover:bg-gray-50 hover:text-gray-900 [&.active]:bg-brand-purple [&.active]:text-white shadow-sm [&.active]:shadow-brand-purple/30 group" onclick="SalonApp.goPage('dashboard',this)">
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple group-[.active]:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
       </svg>
       Dashboard
     </div>
-    <div class="ni" onclick="SalonApp.goPage('payment',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    
+    <div class="ni w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium text-gray-500 cursor-pointer transition-all hover:bg-gray-50 hover:text-gray-900 [&.active]:bg-brand-purple [&.active]:text-white shadow-sm [&.active]:shadow-brand-purple/30 group" onclick="SalonApp.goPage('payment',this)">
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple group-[.active]:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="1" y="4" width="22" height="16" rx="2" />
         <line x1="1" y1="10" x2="23" y2="10" />
       </svg>
       Pembayaran
     </div>
-    <div class="ni" onclick="SalonApp.goPage('members',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    
+    <div class="ni w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium text-gray-500 cursor-pointer transition-all hover:bg-gray-50 hover:text-gray-900 [&.active]:bg-brand-purple [&.active]:text-white shadow-sm [&.active]:shadow-brand-purple/30 group" onclick="SalonApp.goPage('members',this)">
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple group-[.active]:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -36,33 +41,41 @@
       </svg>
       Data Member
     </div>
-    <div class="ni" onclick="SalonApp.goPage('services',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    
+    <div class="ni w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium text-gray-500 cursor-pointer transition-all hover:bg-gray-50 hover:text-gray-900 [&.active]:bg-brand-purple [&.active]:text-white shadow-sm [&.active]:shadow-brand-purple/30 group" onclick="SalonApp.goPage('services',this)">
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple group-[.active]:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
       Kelola Layanan
     </div>
-    <div class="ni" onclick="SalonApp.goPage('report',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    
+    <div class="ni w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium text-gray-500 cursor-pointer transition-all hover:bg-gray-50 hover:text-gray-900 [&.active]:bg-brand-purple [&.active]:text-white shadow-sm [&.active]:shadow-brand-purple/30 group" onclick="SalonApp.goPage('report',this)">
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple group-[.active]:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
       </svg>
       Laporan
     </div>
-    <div class="ni" onclick="SalonApp.goPage('history',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    
+    <div class="ni w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium text-gray-500 cursor-pointer transition-all hover:bg-gray-50 hover:text-gray-900 [&.active]:bg-brand-purple [&.active]:text-white shadow-sm [&.active]:shadow-brand-purple/30 group" onclick="SalonApp.goPage('history',this)">
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple group-[.active]:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
       Riwayat
     </div>
   </nav>
-  <div class="side-bot">
-    <div class="av">SA</div>
-    <div>
-      <div style="font-size:11px;font-weight:500">Siti Aminah</div>
-      <div style="font-size:10px;color:var(--text3)">Admin</div>
+
+  <!-- Sidebar Footer -->
+  <div class="p-4 border-t border-gray-100 bg-gray-50">
+    <div class="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+      <div class="w-10 h-10 rounded-full bg-brand-gold-light text-brand-gold font-bold flex items-center justify-center text-sm ring-2 ring-white">M</div>
+      <div>
+        <div class="text-xs font-bold text-gray-800">{{ auth()->user()->name ?? 'Admin Melly' }}</div>
+        <div class="text-[10px] uppercase tracking-wider text-brand-purple font-semibold mt-0.5">Administrator</div>
+      </div>
     </div>
   </div>
+
 </div>
