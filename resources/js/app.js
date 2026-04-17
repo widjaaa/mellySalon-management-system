@@ -2,23 +2,6 @@
  * =============================================================
  * app.js — Entry Point Aplikasi
  * =============================================================
- *
- * File ini adalah titik masuk utama yang:
- * 1. Import semua modul
- * 2. Expose fungsi ke window (agar onclick di HTML tetap berfungsi)
- * 3. Menunggu event DOMContentLoaded agar aman dieksekusi
- *
- * Struktur modul:
- *   app.js
- *   ├── modules/state.js        → State management terpusat
- *   ├── modules/utils.js        → Helper functions (toast, format Rupiah)
- *   ├── modules/api.js          → Semua AJAX/fetch calls
- *   ├── modules/navigation.js   → Navigasi antar halaman
- *   ├── modules/dashboard.js    → Chart & widgets dashboard
- *   ├── modules/payment.js      → Logika kasir/POS
- *   ├── modules/members.js      → CRUD member
- *   ├── modules/services.js     → CRUD layanan
- *   └── modules/reports.js      → Laporan & export
  */
 
 import './bootstrap';
@@ -26,7 +9,7 @@ import './bootstrap';
 // ==================== Import Modul ====================
 import { initializeState } from './modules/state.js';
 import { showToast } from './modules/utils.js';
-import { goPage, initDateDisplay } from './modules/navigation.js';
+import { goPage, initDateDisplay, toggleSidebar } from './modules/navigation.js';
 import { initDashboardChart } from './modules/dashboard.js';
 import {
     populateServiceSelect,
@@ -44,8 +27,12 @@ import {
     renderMemberDatalist,
     filterMember,
     openMemberModal,
+    openEditMember,
     closeMemberModal,
     saveMember,
+    openDeleteMember,
+    closeDeleteMemberModal,
+    confirmDeleteMember,
 } from './modules/members.js';
 import {
     renderServicePage,
@@ -64,15 +51,16 @@ import {
     exportCSV,
     printReport,
 } from './modules/reports.js';
+import {
+    loadTransactionHistory,
+    printInvoice,
+} from './modules/invoice.js';
 
 // ==================== Expose ke Window ====================
-// Karena HTML menggunakan onclick="..." inline, fungsi harus
-// dapat diakses dari window/global scope melalui SalonApp namespace.
-// Ini lebih aman daripada langsung menaruh di window.
-
 window.SalonApp = {
     // Navigasi
     goPage,
+    toggleSidebar,
 
     // Payment
     searchMember,
@@ -87,8 +75,12 @@ window.SalonApp = {
     // Members
     filterMember,
     openMemberModal,
+    openEditMember,
     closeMemberModal,
     saveMember,
+    openDeleteMember,
+    closeDeleteMemberModal,
+    confirmDeleteMember,
 
     // Services
     setServiceCategory,
@@ -105,12 +97,15 @@ window.SalonApp = {
     exportCSV,
     printReport,
 
+    // Invoice
+    printInvoice,
+    loadTransactionHistory,
+
     // Utils
     showToast,
 };
 
 // ==================== Inisialisasi ====================
-// Akan dipanggil oleh scripts.blade.php setelah data Laravel tersedia.
 window.SalonApp.initialize = function (serverData) {
     // 1. Inisialisasi state dengan data dari server
     initializeState(serverData);
@@ -118,15 +113,14 @@ window.SalonApp.initialize = function (serverData) {
     // 2. Tampilkan tanggal hari ini
     initDateDisplay();
 
-    // 3. Render chart dashboard
+    // 3. Render chart dashboard (async - loads from API)
     initDashboardChart();
 
     // 4. Render data awal
-    renderReport('harian');
     populateServiceSelect();
     renderMemberDatalist();
 
-    // 5. Setup event listener modal (close on background click)
+    // 5. Setup event listener modal
     setupModalBackgroundClose();
 
     console.log('✅ Melly Salon Management System berhasil dimuat.');
@@ -140,6 +134,7 @@ function setupModalBackgroundClose() {
         { id: 'svc-modal', closeFn: closeServiceModal },
         { id: 'del-modal', closeFn: closeDeleteModal },
         { id: 'mem-modal', closeFn: closeMemberModal },
+        { id: 'del-mem-modal', closeFn: closeDeleteMemberModal },
     ];
 
     modals.forEach(({ id, closeFn }) => {

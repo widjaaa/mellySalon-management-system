@@ -2,75 +2,93 @@
  * =============================================================
  * navigation.js — Navigasi antar halaman (SPA-style)
  * =============================================================
- *
- * Menangani navigasi antar "halaman" (div yang disembunyikan/ditampilkan)
- * dan update tanggal di topbar.
  */
 
-import { renderReport } from './reports.js';
 import { renderMembers, renderMemberDatalist } from './members.js';
 import { renderServicePage } from './services.js';
-import { populateServiceSelect } from './payment.js';
-import { state } from './state.js';
+import { renderReport } from './reports.js';
+import { loadTransactionHistory } from './invoice.js';
 
-/** Daftar nama halaman yang tersedia */
-const PAGE_IDS = ['dashboard', 'payment', 'members', 'services', 'report', 'history'];
-
-/** Mapping ID halaman ke judul yang ditampilkan di topbar */
 const PAGE_TITLES = {
     dashboard: 'Dashboard',
     payment: 'Pembayaran',
     members: 'Data Member',
     services: 'Kelola Layanan',
-    report: 'Laporan',
+    report: 'Laporan & Rekapitulasi',
     history: 'Riwayat Transaksi',
 };
 
 /**
- * Berpindah ke halaman tertentu.
- *
- * @param {string} pageId - ID halaman tujuan (misal: 'dashboard', 'payment')
- * @param {HTMLElement|null} navElement - Elemen navigasi yang diklik (untuk highlight aktif)
+ * Navigasi ke halaman tertentu.
  */
-export function goPage(pageId, navElement) {
-    // Toggle visibility halaman
-    PAGE_IDS.forEach(id => {
-        const page = document.getElementById('page-' + id);
-        if (page) page.classList.toggle('active', id === pageId);
-    });
+export function goPage(pageId, navItem) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-    // Update judul di topbar
-    const titleElement = document.getElementById('pg-title');
-    if (titleElement) {
-        titleElement.textContent = PAGE_TITLES[pageId] || pageId;
+    // Show target page
+    const targetPage = document.getElementById('page-' + pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+        // Add fade-in animation
+        targetPage.classList.remove('animate-fade-in-up');
+        void targetPage.offsetWidth; // trigger reflow
+        targetPage.classList.add('animate-fade-in-up');
     }
 
-    // Update highlight navigasi sidebar
-    const navItems = document.querySelectorAll('.ni');
-    navItems.forEach(item => item.classList.remove('active'));
-    if (navElement) navElement.classList.add('active');
-
-    // Trigger render khusus untuk halaman tertentu
-    if (pageId === 'report') renderReport('harian');
-    if (pageId === 'members') renderMembers('all');
-    if (pageId === 'services') {
-        state.activeServiceCategory = 'Semua';
-        renderServicePage();
+    // Update nav active state
+    if (navItem) {
+        document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+        navItem.classList.add('active');
     }
-    if (pageId === 'payment') populateServiceSelect();
+
+    // Update page title
+    const titleEl = document.getElementById('pg-title');
+    if (titleEl) titleEl.textContent = PAGE_TITLES[pageId] || pageId;
+
+    // Lazy-load data per halaman
+    switch (pageId) {
+        case 'members':
+            renderMembers();
+            break;
+        case 'services':
+            renderServicePage();
+            break;
+        case 'report':
+            renderReport('harian');
+            break;
+        case 'history':
+            loadTransactionHistory();
+            break;
+    }
 }
 
 /**
- * Menampilkan tanggal hari ini di chip topbar.
- * Format: "Senin, 9 Apr 2026"
+ * Tampilkan tanggal hari ini di topbar chip.
  */
 export function initDateDisplay() {
-    const DAY_NAMES = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const dateChip = document.getElementById('date-chip');
+    if (!dateChip) return;
 
     const now = new Date();
-    const dateChip = document.getElementById('date-chip');
-    if (dateChip) {
-        dateChip.textContent = `${DAY_NAMES[now.getDay()]}, ${now.getDate()} ${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`;
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    const formatted = now.toLocaleDateString('id-ID', options);
+
+    // Replace inner text (keep SVG icon)
+    const svg = dateChip.querySelector('svg');
+    dateChip.textContent = '';
+    if (svg) dateChip.appendChild(svg);
+    dateChip.appendChild(document.createTextNode(' ' + formatted));
+}
+
+/**
+ * Toggle sidebar di mobile.
+ */
+export function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('hidden');
+        sidebar.classList.toggle('fixed');
+        sidebar.classList.toggle('inset-0');
+        sidebar.classList.toggle('z-50');
     }
 }

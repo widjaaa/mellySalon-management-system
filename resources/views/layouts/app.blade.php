@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salon Cantik — Sistem Manajemen</title>
+  <title>Melly Salon — Sistem Manajemen</title>
+  <meta name="description" content="Sistem Manajemen Salon Kecantikan Melly Salon">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <link
@@ -21,7 +22,7 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
       @include('partials.topbar')
 
-      <div class="flex-1 overflow-y-auto p-5 lg:p-8">
+      <div class="flex-1 overflow-y-auto p-5 lg:p-8" id="main-content">
         @yield('content')
       </div>
     </div>

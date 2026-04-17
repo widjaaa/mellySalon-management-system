@@ -2,16 +2,8 @@
  * =============================================================
  * state.js — State (data) management terpusat
  * =============================================================
- *
- * Menggantikan variabel global yang berserakan.
- * Semua data aplikasi disimpan di satu objek,
- * sehingga mudah dilacak dan di-debug.
  */
 
-/**
- * State global aplikasi.
- * Diakses oleh modul lain via import { state } from './state.js'
- */
 const state = {
     /** @type {Array<Object>} Daftar layanan dari database */
     services: [],
@@ -19,17 +11,23 @@ const state = {
     /** @type {Array<Object>} Daftar member dari database */
     members: [],
 
+    /** @type {Array<Object>} Riwayat transaksi dari database */
+    transactions: [],
+
     /** @type {Array<Object>} Item pesanan dalam transaksi aktif */
     orderItems: [],
-
-    /** @type {Array<Object>} Data laporan transaksi (session ini) */
-    reportRows: [],
 
     /** @type {string} Metode pembayaran yang dipilih */
     paymentMethod: 'Tunai',
 
     /** @type {number} Total yang harus dibayar */
     grandTotal: 0,
+
+    /** @type {number} Subtotal sebelum diskon */
+    subtotal: 0,
+
+    /** @type {number} Jumlah diskon */
+    discountAmount: 0,
 
     /** @type {string} Kategori layanan yang aktif di filter */
     activeServiceCategory: 'Semua',
@@ -39,18 +37,27 @@ const state = {
 
     /** @type {number|null} ID layanan yang akan dihapus */
     deleteServiceId: null,
+
+    /** @type {number|null} ID member yang sedang di-edit */
+    editMemberId: null,
+
+    /** @type {number|null} ID member yang akan dihapus */
+    deleteMemberId: null,
+
+    /** @type {string} Periode laporan aktif */
+    reportPeriod: 'harian',
+
+    /** @type {Object|null} Data performa dashboard */
+    performanceData: null,
+
+    /** @type {Object|null} Data laporan */
+    reportData: null,
 };
 
 /**
  * Inisialisasi state dengan data dari server (Laravel).
- * Dipanggil sekali saat aplikasi pertama kali dimuat.
- *
- * @param {Object} serverData - Data dari Laravel @json()
- * @param {Array} serverData.services - Data layanan dari database
- * @param {Array} serverData.members - Data member dari database
  */
 export function initializeState(serverData) {
-    // Map data layanan dari format database ke format frontend
     state.services = serverData.services.map(service => ({
         id: service.id,
         name: service.name,
@@ -60,7 +67,6 @@ export function initializeState(serverData) {
         desc: service.description,
     }));
 
-    // Map data member dari format database ke format frontend
     state.members = serverData.members.map(member => ({
         id: member.id,
         name: member.name,

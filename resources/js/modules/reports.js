@@ -1,109 +1,148 @@
 /**
  * =============================================================
- * reports.js — Logika halaman Laporan & Export
+ * reports.js — Logika halaman Laporan & Rekapitulasi
  * =============================================================
- *
- * Menangani:
- * - Render tabel laporan transaksi
- * - Ringkasan statistik (total transaksi, pendapatan, rata-rata)
- * - Export data ke file CSV
- * - Cetak laporan
  */
 
 import { state } from './state.js';
-import { formatRupiah, showToast } from './utils.js';
+import { formatRupiah, showToast, formatTime } from './utils.js';
+import { fetchReportData } from './api.js';
 
 /**
- * Render laporan dengan ringkasan dan tabel detail transaksi.
- * @param {string} period - Periode laporan: 'harian', 'mingguan', atau 'bulanan'
+ * Render laporan dari API.
  */
-export function renderReport(period) {
-    renderReportSummary();
-    renderReportTable();
+export async function renderReport(period = 'harian') {
+    state.reportPeriod = period;
+
+    try {
+        const data = await fetchReportData(period);
+        state.reportData = data;
+        renderReportSummary(data);
+        renderPaymentBreakdown(data);
+        renderReportTable(data);
+        updateReportTitle(period);
+    } catch (error) {
+        console.error('Gagal memuat laporan:', error);
+    }
 }
 
 /**
- * Render kartu ringkasan laporan (total transaksi, pendapatan, rata-rata).
+ * Render kartu ringkasan.
  */
-function renderReportSummary() {
-    const totalRevenue = state.reportRows.reduce((sum, row) => sum + row.total, 0);
-    const averageTransaction = state.reportRows.length
-        ? Math.round(totalRevenue / state.reportRows.length)
-        : 0;
+function renderReportSummary(data) {
+    const s = data.summary;
+    const el = (id, val) => {
+        const e = document.getElementById(id);
+        if (e) e.textContent = val;
+    };
 
-    const summaryData = [
-        { label: 'Total Transaksi', value: state.reportRows.length + 'x' },
-        { label: 'Total Pendapatan', value: formatRupiah(totalRevenue) },
-        { label: 'Rata-rata Transaksi', value: formatRupiah(averageTransaction) },
-    ];
+    el('rep-total-trx', s.total_transactions + 'x');
+    el('rep-total-rev', formatRupiah(s.total_revenue));
+    el('rep-avg', formatRupiah(s.average_transaction));
+    el('rep-member-trx', s.member_transactions + 'x');
+}
 
-    const summaryContainer = document.getElementById('rep-summary');
-    if (summaryContainer) {
-        summaryContainer.innerHTML = summaryData.map(item => `
-            <div class="mc">
-                <div class="mc-lbl">${item.label}</div>
-                <div class="mc-val" style="font-size:17px">${item.value}</div>
-            </div>
-        `).join('');
-    }
+/**
+ * Render breakdown metode pembayaran.
+ */
+function renderPaymentBreakdown(data) {
+    const pb = data.payment_breakdown || {};
+
+    const update = (method, idTotal, idCount) => {
+        const info = pb[method] || { count: 0, total: 0 };
+        const elTotal = document.getElementById(idTotal);
+        const elCount = document.getElementById(idCount);
+        if (elTotal) elTotal.textContent = formatRupiah(info.total);
+        if (elCount) elCount.textContent = info.count + ' transaksi';
+    };
+
+    update('Tunai', 'pm-cash', 'pm-cash-count');
+    update('QRIS', 'pm-qris', 'pm-qris-count');
+    update('Transfer', 'pm-transfer', 'pm-transfer-count');
 }
 
 /**
  * Render tabel detail transaksi.
  */
-function renderReportTable() {
-    const tableBody = document.getElementById('rep-body');
-    if (!tableBody) return;
+function renderReportTable(data) {
+    const tbody = document.getElementById('rep-body');
+    if (!tbody) return;
 
-    tableBody.innerHTML = state.reportRows.map(row => `
-        <tr>
-            <td>${row.time}</td>
-            <td>${row.name}</td>
-            <td>${row.svcs}</td>
-            <td>${row.method}</td>
-            <td>${row.isMember ? '<span class="pill pill-member">Member</span>' : '—'}</td>
-            <td style="text-align:right;font-weight:500">${formatRupiah(row.total)}</td>
-        </tr>
-    `).join('');
+    const transactions = data.transactions || [];
+
+    if (transactions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-gray-400 text-sm">Belum ada data transaksi untuk periode ini.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = transactions.map(trx => {
+        const time = formatTime(trx.created_at);
+        const memberBadge = trx.member_id
+            ? '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700">Member</span>'
+            : '<span class="text-gray-400">—</span>';
+
+        return `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-3 text-sm text-gray-500">${time}</td>
+            <td class="px-6 py-3 text-sm font-medium text-gray-800">${trx.customer_name}</td>
+            <td class="px-6 py-3 text-sm text-gray-600">${trx.services_summary}</td>
+            <td class="px-6 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-brand-purple-light text-brand-purple-dark">${trx.payment_method}</span></td>
+            <td class="px-6 py-3">${memberBadge}</td>
+            <td class="px-6 py-3 text-sm font-bold text-gray-800 text-right">${formatRupiah(trx.total_amount)}</td>
+        </tr>`;
+    }).join('');
+}
+
+/**
+ * Update judul laporan.
+ */
+function updateReportTitle(period) {
+    const title = document.getElementById('rep-title');
+    if (title) {
+        const labels = { harian: 'Laporan Harian', mingguan: 'Laporan Mingguan', bulanan: 'Laporan Bulanan' };
+        title.textContent = labels[period] || 'Laporan';
+    }
 }
 
 /**
  * Mengubah tab periode laporan.
- * @param {string} period - Periode yang dipilih
- * @param {HTMLElement} element - Tombol tab yang diklik
  */
 export function setReportPeriod(period, element) {
-    document.querySelectorAll('#page-report .tab').forEach(
-        btn => btn.classList.remove('act')
-    );
-    element.classList.add('act');
+    document.querySelectorAll('#page-report .report-tab').forEach(btn => {
+        btn.classList.remove('active', 'bg-brand-purple', 'text-white', 'border-brand-purple');
+        btn.classList.add('border-gray-200', 'bg-white', 'text-gray-600');
+    });
+    element.classList.add('active', 'bg-brand-purple', 'text-white', 'border-brand-purple');
+    element.classList.remove('border-gray-200', 'bg-white', 'text-gray-600');
     renderReport(period);
 }
 
 /**
- * Export data laporan ke file CSV dan download otomatis.
+ * Export CSV.
  */
 export function exportCSV() {
+    if (!state.reportData || !state.reportData.transactions.length) {
+        showToast('Tidak ada data untuk diekspor.', 'error');
+        return;
+    }
+
     const header = 'Waktu,Pelanggan,Layanan,Metode,Member,Total\n';
-    const rows = state.reportRows.map(row =>
-        `${row.time},"${row.name}","${row.svcs}",${row.method},${row.isMember ? 'Ya' : 'Tidak'},${row.total}`
-    ).join('\n');
+    const rows = state.reportData.transactions.map(trx => {
+        const time = formatTime(trx.created_at);
+        return `${time},"${trx.customer_name}","${trx.services_summary}",${trx.payment_method},${trx.member_id ? 'Ya' : 'Tidak'},${trx.total_amount}`;
+    }).join('\n');
 
-    // BOM (\uFEFF) agar Excel bisa membaca karakter Indonesia dengan benar
-    const blob = new Blob(['\uFEFF' + header + rows], {
-        type: 'text/csv;charset=utf-8',
-    });
-
+    const blob = new Blob(['\uFEFF' + header + rows], { type: 'text/csv;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'laporan-salon-cantik.csv';
+    link.download = `laporan-melly-salon-${state.reportPeriod}.csv`;
     link.click();
 
-    showToast('File CSV berhasil diunduh');
+    showToast('File CSV berhasil diunduh!');
 }
 
 /**
- * Cetak laporan menggunakan fungsi print browser.
+ * Cetak laporan.
  */
 export function printReport() {
     window.print();

@@ -1,52 +1,88 @@
 /**
  * =============================================================
- * utils.js — Fungsi utilitas yang dipakai di seluruh aplikasi
+ * utils.js — Helper functions
  * =============================================================
- *
- * Berisi helper functions seperti format Rupiah, CSRF token,
- * dan notifikasi toast.
  */
 
 /**
- * Mengambil CSRF token dari meta tag untuk keamanan AJAX requests.
- * @returns {string} CSRF token value
+ * Format angka ke format Rupiah Indonesia.
+ * @param {number} num - Angka yang akan diformat
+ * @returns {string} String format Rupiah
  */
-export function getCsrfToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? meta.getAttribute('content') : '';
+export function formatRupiah(num) {
+    if (num === null || num === undefined) return 'Rp 0';
+    return 'Rp ' + num.toLocaleString('id-ID');
 }
 
 /**
- * Membuat headers standar untuk semua AJAX requests.
- * @returns {Object} Headers object dengan Content-Type, CSRF, dan Accept
+ * Tampilkan toast notification.
+ * @param {string} message - Pesan yang ditampilkan
+ * @param {string} type - Tipe toast: 'success', 'error', 'info'
+ */
+export function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+
+    // Set color based on type
+    toast.className = 'fixed bottom-5 right-5 px-5 py-3 rounded-xl text-sm font-medium shadow-xl transition-all duration-300 z-[999]';
+    switch (type) {
+        case 'error':
+            toast.classList.add('bg-red-600', 'text-white');
+            break;
+        case 'info':
+            toast.classList.add('bg-blue-600', 'text-white');
+            break;
+        default:
+            toast.classList.add('bg-gray-800', 'text-white');
+    }
+
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+    }, 3000);
+}
+
+/**
+ * Mendapatkan headers untuk request ke Laravel API.
  */
 export function getRequestHeaders() {
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     return {
         'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCsrfToken(),
         'Accept': 'application/json',
+        'X-CSRF-TOKEN': token || '',
+        'X-Requested-With': 'XMLHttpRequest',
     };
 }
 
 /**
- * Format angka menjadi format Rupiah Indonesia.
- * @param {number} amount - Jumlah yang akan diformat
- * @returns {string} Format Rupiah, contoh: "Rp 50.000"
+ * Format tanggal ke format Indonesia.
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date
  */
-export function formatRupiah(amount) {
-    return 'Rp ' + Number(amount).toLocaleString('id-ID');
+export function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    });
 }
 
 /**
- * Menampilkan notifikasi toast di pojok kanan bawah layar.
- * Toast akan hilang otomatis setelah 2.8 detik.
- * @param {string} message - Pesan yang ditampilkan
+ * Format waktu dari ISO string.
+ * @param {string} dateString - ISO date string
+ * @returns {string} HH:MM format
  */
-export function showToast(message) {
-    const toast = document.getElementById('toast');
-    if (!toast) return;
-
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2800);
+export function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 }

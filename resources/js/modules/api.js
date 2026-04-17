@@ -27,11 +27,7 @@ async function apiRequest(url, method = 'GET', body = null) {
         throw new Error(message);
     }
 
-    // --- BAGIAN YANG DIPERBAIKI ---
     const result = await response.json();
-
-    // Jika respons dari Laravel dibungkus dalam properti 'data' (seperti yang kita buat di Controller),
-    // kita langsung kembalikan isinya saja. Jika tidak, kembalikan utuh.
     return result.data !== undefined ? result.data : result;
 }
 
@@ -55,8 +51,36 @@ export async function createMember(memberData) {
     return apiRequest('/members', 'POST', memberData);
 }
 
+export async function updateMember(id, memberData) {
+    return apiRequest(`/members/${id}`, 'PUT', memberData);
+}
+
+export async function deleteMember(id) {
+    return apiRequest(`/members/${id}`, 'DELETE');
+}
+
 // ==================== TRANSACTIONS API ====================
 
 export async function createTransaction(transactionData) {
     return apiRequest('/transactions', 'POST', transactionData);
+}
+
+export async function fetchTransactions(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const url = query ? `/transactions?${query}` : '/transactions';
+    return apiRequest(url);
+}
+
+export async function fetchTransactionDetail(id) {
+    return apiRequest(`/transactions/${id}`);
+}
+
+// ==================== REPORTS API ====================
+
+export async function fetchReportData(period = 'harian') {
+    return apiRequest(`/reports?period=${period}`);
+}
+
+export async function fetchPerformanceData() {
+    return apiRequest('/reports/performance');
 }

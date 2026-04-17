@@ -1,107 +1,125 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Melly Salon Management</title>
+    <title>Login — Melly Salon Management</title>
+    <meta name="description" content="Sistem Manajemen Salon Kecantikan Melly Salon">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
 </head>
-<body class="relative min-h-screen flex items-center justify-center font-sans antialiased selection:bg-brand-gold selection:text-black">
 
-    <!-- Aesthetic Background with Overlay -->
-    <div class="fixed inset-0 z-[-1] bg-brand-purple-dark">
-        <img src="{{ asset('images/login-bg.png') }}" alt="Background" class="w-full h-full object-cover opacity-60">
-        <!-- Gradients to make it elegant and readable -->
-        <div class="absolute inset-0 bg-gradient-to-br from-gray-900/90 via-brand-purple-dark/80 to-black/90 backdrop-blur-sm"></div>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-950 via-purple-900 to-purple-800 relative overflow-hidden">
+    {{-- Decorative background elements --}}
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-purple/10 rounded-full blur-3xl"></div>
     </div>
 
-    <!-- Login Container -->
-    <div class="w-full max-w-md px-5 sm:px-0 relative z-10 w-full">
-        
-        <!-- Logo Area -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/5 backdrop-blur-xl shadow-2xl border border-white/20 mb-5 ring-4 ring-brand-purple-light/10">
-                <span class="text-brand-gold-mid font-serif font-bold text-4xl">M</span>
+    {{-- Login Card --}}
+    <div class="relative z-10 w-full max-w-md mx-4">
+        {{-- Glassmorphism card --}}
+        <div class="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl p-8 md:p-10">
+
+            {{-- Logo & Branding --}}
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-white/30">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" class="drop-shadow-lg">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                </div>
+                <h1 class="font-serif text-3xl font-bold text-white tracking-tight mb-1">Melly Salon</h1>
+                <p class="text-purple-200 text-sm font-medium tracking-wider uppercase">Sistem Manajemen</p>
             </div>
-            <h1 class="text-3xl font-serif font-bold text-white tracking-wide">Melly Salon</h1>
-            <p class="text-gray-300 text-sm mt-3 font-light tracking-wide uppercase">Sistem Manajemen Eksekutif</p>
-        </div>
 
-        <!-- Glassmorphism Card -->
-        <div class="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.4)] overflow-hidden relative">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold via-brand-purple-mid to-brand-gold"></div>
-            
-            <div class="p-8 sm:p-10">
-                
-                <h2 class="text-xl font-medium text-white mb-8 text-center tracking-wider">
-                    Silakan Masuk
-                </h2>
-
-                <form action="{{ route('login') }}" method="POST" class="space-y-6">
-                    @csrf
-                    
-                    @if ($errors->any())
-                    <div class="p-4 bg-red-500/10 border border-red-500/30 rounded-xl mb-6">
-                        <p class="text-sm text-red-200 text-center font-medium">
-                            {{ $errors->first() }}
-                        </p>
-                    </div>
-                    @endif
-
-                    <div>
-                        <label for="email" class="block text-xs font-semibold tracking-widest uppercase text-gray-400 mb-2">Alamat Email</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-500 group-focus-within:text-brand-gold-mid transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                                </svg>
-                            </div>
-                            <input type="email" id="email" name="email" value="{{ old('email') }}"
-                                class="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl focus:bg-black/40 focus:border-brand-gold-mid focus:ring-1 focus:ring-brand-gold text-white placeholder-gray-500 outline-none transition-all font-medium"
-                                placeholder="admin@example.com" required autofocus>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="password" class="block text-xs font-semibold tracking-widest uppercase text-gray-400 mb-2">Kata Sandi</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-500 group-focus-within:text-brand-gold-mid transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </div>
-                            <input type="password" id="password" name="password" 
-                                class="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl focus:bg-black/40 focus:border-brand-gold-mid focus:ring-1 focus:ring-brand-gold text-white placeholder-gray-500 outline-none transition-all font-medium"
-                                placeholder="••••••••" required>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-2">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="remember" name="remember" 
-                                class="h-4 w-4 bg-black/20 border-white/20 rounded focus:ring-brand-gold-mid text-brand-gold cursor-pointer checked:bg-brand-gold">
-                            <label for="remember" class="ml-2 block text-sm text-gray-400 cursor-pointer hover:text-gray-200 transition-colors">Ingat sesi saya</label>
-                        </div>
-                        <a href="#" class="text-sm font-medium text-brand-gold-mid hover:text-white transition-colors">Lupa sandi?</a>
-                    </div>
-
-                    <button type="submit" 
-                        class="w-full mt-4 bg-gradient-to-r from-brand-gold to-brand-gold-mid text-black font-bold py-4 px-4 rounded-xl shadow-[0_0_15px_rgba(250,199,117,0.4)] hover:shadow-[0_0_25px_rgba(250,199,117,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex justify-center items-center gap-2 group border border-brand-gold-light/50">
-                        <span class="tracking-widest uppercase text-sm">Masuk Sistem</span>
-                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            {{-- Error Messages --}}
+            @if ($errors->any())
+                <div class="bg-red-500/20 border border-red-400/30 rounded-xl p-4 mb-6 backdrop-blur-sm">
+                    <div class="flex items-center gap-2 text-red-200 text-sm font-medium">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                    </button>
-                    
-                </form>
-            </div>
-            
-            <div class="bg-black/40 backdrop-blur-md border-t border-white/5 p-4 text-center">
-                <p class="text-xs text-brand-purple-mid tracking-wide">Akses khusus staf internal Melly Salon.</p>
+                        {{ $errors->first('email') }}
+                    </div>
+                </div>
+            @endif
+
+            {{-- Login Form --}}
+            <form method="POST" action="/login" class="space-y-5" id="login-form">
+                @csrf
+
+                <div>
+                    <label for="email" class="block text-xs font-semibold text-purple-200 uppercase tracking-wider mb-2">
+                        Email
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ old('email') }}"
+                            placeholder="admin@mellysalon.com"
+                            required
+                            autofocus
+                            class="w-full bg-white/10 border border-white/20 text-white placeholder-purple-300/60 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all backdrop-blur-sm"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-semibold text-purple-200 uppercase tracking-wider mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="••••••••"
+                            required
+                            class="w-full bg-white/10 border border-white/20 text-white placeholder-purple-300/60 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all backdrop-blur-sm"
+                        >
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-white/30 bg-white/10 text-brand-purple focus:ring-white/30 focus:ring-offset-0">
+                        <span class="text-sm text-purple-200 group-hover:text-white transition-colors">Ingat saya</span>
+                    </label>
+                </div>
+
+                <button
+                    type="submit"
+                    id="login-btn"
+                    class="w-full bg-white text-purple-900 font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm tracking-wide uppercase"
+                >
+                    Masuk ke Dashboard
+                </button>
+            </form>
+
+            {{-- Footer --}}
+            <div class="mt-8 pt-6 border-t border-white/10 text-center">
+                <p class="text-purple-300/60 text-xs">
+                    &copy; {{ date('Y') }} Melly Salon Management System
+                </p>
             </div>
         </div>
-
     </div>
-
 </body>
+
 </html>
