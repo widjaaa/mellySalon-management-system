@@ -104,7 +104,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Tanggal Lahir</label>
-            <input type="text" id="m-bday" placeholder="cth: 12 Mar" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all placeholder:text-gray-400">
+            <input type="date" id="m-bday" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all placeholder:text-gray-400">
           </div>
         </div>
       </div>
@@ -129,6 +129,24 @@
       <div class="flex gap-3">
         <button class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors" onclick="SalonApp.closeDeleteMemberModal()">Batal</button>
         <button class="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors shadow-md" onclick="SalonApp.confirmDeleteMember()">Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VOID TRANSAKSI -->
+<div class="modal-bg hidden" id="void-trx-modal">
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4" onclick="if(event.target===this)SalonApp.closeVoidModal()">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-modal-in">
+      <div class="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+      </div>
+      <h3 class="text-lg font-bold text-gray-800 text-center mb-2">Batalkan Transaksi?</h3>
+      <p class="text-sm text-gray-500 text-center mb-2">Transaksi <strong id="void-trx-invoice" class="text-gray-800"></strong> akan dibatalkan.</p>
+      <p class="text-xs text-amber-600 text-center mb-6 bg-amber-50 rounded-lg p-2">⚠️ Poin dan data member yang terkait akan dikembalikan.</p>
+      <div class="flex gap-3">
+        <button class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors" onclick="SalonApp.closeVoidModal()">Batal</button>
+        <button class="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition-colors shadow-md" onclick="SalonApp.confirmVoidTransaction()">Ya, Batalkan</button>
       </div>
     </div>
   </div>

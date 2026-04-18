@@ -84,9 +84,19 @@ function renderBirthdayMembers(members) {
         return;
     }
 
-    container.innerHTML = members.map(member => `
+    container.innerHTML = members.map(member => {
+        let bdayStr = '';
+        if (member.bday) {
+            try {
+                const d = new Date(member.bday);
+                if (!isNaN(d.getTime())) {
+                    bdayStr = '(' + d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + ')';
+                }
+            } catch { /* ignore */ }
+        }
+        return `
         <span class="bg-brand-purple-light text-brand-purple-dark px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5">
-            🎂 ${member.name} ${member.bday ? '(' + member.bday + ')' : ''}
-        </span>
-    `).join('');
+            🎂 ${member.name} ${bdayStr}
+        </span>`;
+    }).join('');
 }

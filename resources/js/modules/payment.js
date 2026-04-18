@@ -10,6 +10,10 @@ import { createTransaction } from './api.js';
 import { goPage } from './navigation.js';
 import { loadTransactionHistory } from './invoice.js';
 
+// QRIS timer state
+let qrisTimerInterval = null;
+let qrisTimeLeft = 300; // 5 minutes in seconds
+
 /**
  * Mengisi dropdown pilihan layanan dengan data dari state.
  */
@@ -173,6 +177,12 @@ function updateTotals() {
             poinPreview.classList.add('hidden');
         }
     }
+
+    // Update QRIS total display if visible
+    const qrisTotalDisplay = document.getElementById('qris-total-display');
+    if (qrisTotalDisplay) {
+        qrisTotalDisplay.textContent = formatRupiah(state.grandTotal);
+    }
 }
 
 /**
@@ -196,6 +206,13 @@ export function selectPaymentMethod(element, method) {
     });
 
     if (method === 'Tunai') calculateChange();
+
+    // Start QRIS timer when QRIS is selected
+    if (method === 'QRIS') {
+        startQrisTimer();
+    } else {
+        stopQrisTimer();
+    }
 }
 
 /**
@@ -240,15 +257,194 @@ export function copyAccountNumber(accountNumber) {
     showToast('Nomor Rekening ' + accountNumber + ' disalin!');
 }
 
+// ==================== QRIS FUNCTIONS ====================
+
 /**
- * Memproses pembayaran.
+ * Mulai countdown timer QRIS (5 menit).
  */
-export async function processPayment() {
+function startQrisTimer() {
+    stopQrisTimer(); // Clear any existing timer
+    qrisTimeLeft = 300; // Reset to 5 minutes
+
+    // Reset UI states
+    const qrisWaiting = document.getElementById('qris-waiting');
+    const qrisSuccess = document.getElementById('qris-success');
+    if (qrisWaiting) qrisWaiting.classList.remove('hidden');
+    if (qrisSuccess) qrisSuccess.classList.add('hidden');
+
+    // Update total display
+    const qrisTotalDisplay = document.getElementById('qris-total-display');
+    if (qrisTotalDisplay) {
+        qrisTotalDisplay.textContent = formatRupiah(state.grandTotal);
+    }
+
+    updateQrisTimerDisplay();
+
+    qrisTimerInterval = setInterval(() => {
+        qrisTimeLeft--;
+
+        if (qrisTimeLeft <= 0) {
+            stopQrisTimer();
+            showToast('Waktu pembayaran QRIS habis. Silakan ulangi.', 'error');
+            // Reset QRIS section
+            const qrisSection = document.getElementById('qris-section');
+            if (qrisSection) qrisSection.classList.add('hidden');
+            // Reset payment method selection to Tunai
+            const tunaiBtn = document.querySelector('.pm');
+            if (tunaiBtn) selectPaymentMethod(tunaiBtn, 'Tunai');
+            return;
+        }
+
+        updateQrisTimerDisplay();
+    }, 1000);
+}
+
+/**
+ * Stop QRIS timer.
+ */
+function stopQrisTimer() {
+    if (qrisTimerInterval) {
+        clearInterval(qrisTimerInterval);
+        qrisTimerInterval = null;
+    }
+}
+
+/**
+ * Update tampilan timer QRIS.
+ */
+function updateQrisTimerDisplay() {
+    const timerElement = document.getElementById('qris-timer');
+    const timerBar = document.getElementById('qris-timer-bar');
+
+    if (timerElement) {
+        const minutes = Math.floor(qrisTimeLeft / 60);
+        const seconds = qrisTimeLeft % 60;
+        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        // Change color when time is running low
+        if (qrisTimeLeft <= 60) {
+            timerElement.classList.remove('text-gray-800');
+            timerElement.classList.add('text-red-600');
+        } else {
+            timerElement.classList.remove('text-red-600');
+            timerElement.classList.add('text-gray-800');
+        }
+    }
+
+    if (timerBar) {
+        const percentage = (qrisTimeLeft / 300) * 100;
+        timerBar.style.width = percentage + '%';
+
+        // Change bar color when low
+        if (qrisTimeLeft <= 60) {
+            timerBar.classList.remove('from-brand-purple', 'to-brand-purple-dark');
+            timerBar.classList.add('from-red-500', 'to-red-600');
+        } else {
+            timerBar.classList.remove('from-red-500', 'to-red-600');
+            timerBar.classList.add('from-brand-purple', 'to-brand-purple-dark');
+        }
+    }
+}
+
+/**
+ * Konfirmasi pembayaran QRIS oleh kasir.
+ */
+export async function confirmQrisPayment() {
     if (!state.orderItems.length) {
-        showToast('Tambahkan layanan terlebih dahulu.', 'error');
+        showToast('Tidak ada layanan yang dipilih.', 'error');
         return;
     }
 
+    if (state.grandTotal <= 0) {
+        showToast('Total pembayaran tidak valid.', 'error');
+        return;
+    }
+
+    // Stop the timer
+    stopQrisTimer();
+
+    // Show success animation
+    const qrisWaiting = document.getElementById('qris-waiting');
+    const qrisSuccess = document.getElementById('qris-success');
+    const qrisSuccessAmount = document.getElementById('qris-success-amount');
+
+    if (qrisWaiting) qrisWaiting.classList.add('hidden');
+    if (qrisSuccess) {
+        qrisSuccess.classList.remove('hidden');
+        qrisSuccess.classList.add('animate-fade-in-up');
+    }
+    if (qrisSuccessAmount) {
+        qrisSuccessAmount.textContent = formatRupiah(state.grandTotal);
+    }
+
+    // Play success sound effect (optional, browser might block)
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const playTone = (freq, start, duration) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime + start);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + duration);
+            osc.start(audioCtx.currentTime + start);
+            osc.stop(audioCtx.currentTime + start + duration);
+        };
+        playTone(523, 0, 0.15);    // C5
+        playTone(659, 0.12, 0.15); // E5
+        playTone(784, 0.24, 0.3);  // G5
+    } catch (e) {
+        // Audio not supported, ignore
+    }
+
+    // Auto-submit transaction after a short delay for the animation
+    setTimeout(async () => {
+        await submitTransaction();
+    }, 2000);
+}
+
+/**
+ * Batalkan pembayaran QRIS.
+ */
+export function cancelQrisPayment() {
+    stopQrisTimer();
+
+    // Reset QRIS UI
+    const qrisWaiting = document.getElementById('qris-waiting');
+    const qrisSuccess = document.getElementById('qris-success');
+    if (qrisWaiting) qrisWaiting.classList.remove('hidden');
+    if (qrisSuccess) qrisSuccess.classList.add('hidden');
+
+    // Hide QRIS section and switch back to Tunai
+    const qrisSection = document.getElementById('qris-section');
+    if (qrisSection) qrisSection.classList.add('hidden');
+
+    const cashSection = document.getElementById('cash-section');
+    if (cashSection) cashSection.classList.remove('hidden');
+
+    // Reset payment method buttons
+    const pmButtons = document.querySelectorAll('.pm');
+    pmButtons.forEach((btn, index) => {
+        if (index === 0) {
+            // Tunai button
+            btn.classList.add('sel', 'border-brand-purple', 'bg-brand-purple-light', 'text-brand-purple-dark');
+            btn.classList.remove('border-gray-200', 'bg-white', 'text-gray-600');
+        } else {
+            btn.classList.remove('sel', 'border-brand-purple', 'bg-brand-purple-light', 'text-brand-purple-dark');
+            btn.classList.add('border-gray-200', 'bg-white', 'text-gray-600');
+        }
+    });
+
+    state.paymentMethod = 'Tunai';
+    showToast('Pembayaran QRIS dibatalkan.', 'info');
+}
+
+/**
+ * Submit transaksi ke server (digunakan oleh semua metode pembayaran).
+ */
+async function submitTransaction() {
     const customerName = document.getElementById('cust-name').value.trim() || 'Pelanggan';
     const servicesSummary = state.orderItems.map(item => item.name).join(' + ');
 
@@ -258,7 +454,6 @@ export async function processPayment() {
     );
     const pointsEarned = foundMember ? Math.floor(state.grandTotal / 1000) : 0;
 
-    // Cash validation
     let cashReceived = null;
     let cashChange = null;
     if (state.paymentMethod === 'Tunai') {
@@ -299,7 +494,12 @@ export async function processPayment() {
         }
 
         resetPaymentForm();
-        showToast('Pembayaran berhasil! Invoice: ' + (result.transaction?.invoice_number || ''));
+
+        if (state.paymentMethod === 'QRIS') {
+            showToast('✅ Pembayaran QRIS berhasil! Invoice: ' + (result.transaction?.invoice_number || ''));
+        } else {
+            showToast('Pembayaran berhasil! Invoice: ' + (result.transaction?.invoice_number || ''));
+        }
 
         // Reload transaction history
         loadTransactionHistory();
@@ -310,6 +510,33 @@ export async function processPayment() {
     } catch (error) {
         showToast(error.message, 'error');
     }
+}
+
+/**
+ * Memproses pembayaran (tombol utama "Proses Pembayaran").
+ */
+export async function processPayment() {
+    if (!state.orderItems.length) {
+        showToast('Tambahkan layanan terlebih dahulu.', 'error');
+        return;
+    }
+
+    // If QRIS is selected, the flow is handled by confirmQrisPayment
+    if (state.paymentMethod === 'QRIS') {
+        showToast('Untuk pembayaran QRIS, gunakan tombol "Konfirmasi Pembayaran Diterima" setelah pelanggan scan dan bayar.', 'info');
+        return;
+    }
+
+    // Cash validation
+    if (state.paymentMethod === 'Tunai') {
+        const cashReceived = parseInt(document.getElementById('cash-in').value) || 0;
+        if (cashReceived < state.grandTotal) {
+            showToast('Uang yang diterima kurang dari total pembayaran.', 'error');
+            return;
+        }
+    }
+
+    await submitTransaction();
 }
 
 /**
@@ -345,4 +572,32 @@ function resetPaymentForm() {
 
     const changeRow = document.getElementById('change-row');
     if (changeRow) { changeRow.classList.add('hidden'); changeRow.classList.remove('flex'); }
+
+    // Reset QRIS state
+    stopQrisTimer();
+    const qrisWaiting = document.getElementById('qris-waiting');
+    const qrisSuccess = document.getElementById('qris-success');
+    if (qrisWaiting) qrisWaiting.classList.remove('hidden');
+    if (qrisSuccess) qrisSuccess.classList.add('hidden');
+
+    // Reset QRIS section visibility
+    const qrisSection = document.getElementById('qris-section');
+    if (qrisSection) qrisSection.classList.add('hidden');
+
+    // Reset to Tunai
+    const cashSection = document.getElementById('cash-section');
+    if (cashSection) cashSection.classList.remove('hidden');
+
+    const pmButtons = document.querySelectorAll('.pm');
+    pmButtons.forEach((btn, index) => {
+        if (index === 0) {
+            btn.classList.add('sel', 'border-brand-purple', 'bg-brand-purple-light', 'text-brand-purple-dark');
+            btn.classList.remove('border-gray-200', 'bg-white', 'text-gray-600');
+        } else {
+            btn.classList.remove('sel', 'border-brand-purple', 'bg-brand-purple-light', 'text-brand-purple-dark');
+            btn.classList.add('border-gray-200', 'bg-white', 'text-gray-600');
+        }
+    });
+    state.paymentMethod = 'Tunai';
 }
+

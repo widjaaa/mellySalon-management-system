@@ -1,23 +1,94 @@
 /**
  * =============================================================
- * invoice.js — Generate & cetak Invoice
+ * invoice.js — Riwayat Transaksi, Invoice, Void, Pagination
  * =============================================================
  */
 
 import { state } from './state.js';
 import { formatRupiah, formatDate, formatTime, showToast } from './utils.js';
-import { fetchTransactions, fetchTransactionDetail } from './api.js';
+import { fetchTransactions, fetchTransactionDetail, voidTransaction } from './api.js';
+
+// ==================== State untuk Riwayat ====================
+let historyState = {
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    search: '',
+    statusFilter: 'all',
+    voidTargetId: null,
+    voidTargetInvoice: '',
+    debounceTimer: null,
+};
 
 /**
- * Muat riwayat transaksi dari database.
+ * Muat riwayat transaksi dengan search & pagination.
  */
-export async function loadTransactionHistory() {
+export async function loadTransactionHistory(page = 1) {
     try {
-        const transactions = await fetchTransactions();
+        historyState.currentPage = page;
+
+        const params = { page, per_page: 15 };
+        if (historyState.search) params.search = historyState.search;
+        if (historyState.statusFilter !== 'all') params.status = historyState.statusFilter;
+
+        const result = await fetchTransactions(params);
+        const transactions = result.data || [];
+        const pagination = result.pagination || {};
+
+        historyState.lastPage = pagination.last_page || 1;
+        historyState.total = pagination.total || 0;
+
         state.transactions = transactions;
         renderTransactionHistory(transactions);
+        renderPagination(pagination);
     } catch (error) {
         console.error('Gagal memuat riwayat:', error);
+    }
+}
+
+/**
+ * Debounced search handler.
+ */
+export function searchTransactionHistory() {
+    clearTimeout(historyState.debounceTimer);
+    historyState.debounceTimer = setTimeout(() => {
+        const input = document.getElementById('hist-search');
+        historyState.search = input ? input.value.trim() : '';
+        loadTransactionHistory(1);
+    }, 400);
+}
+
+/**
+ * Filter berdasarkan status transaksi.
+ */
+export function filterTransactionStatus(status, btn) {
+    historyState.statusFilter = status;
+
+    // Update button active state
+    document.querySelectorAll('.hist-status-btn').forEach(b => {
+        b.classList.remove('active');
+        b.classList.add('border-gray-200', 'bg-white', 'text-gray-600');
+    });
+    if (btn) {
+        btn.classList.add('active');
+        btn.classList.remove('border-gray-200', 'bg-white', 'text-gray-600');
+    }
+
+    loadTransactionHistory(1);
+}
+
+/**
+ * Navigasi halaman.
+ */
+export function histPrevPage() {
+    if (historyState.currentPage > 1) {
+        loadTransactionHistory(historyState.currentPage - 1);
+    }
+}
+
+export function histNextPage() {
+    if (historyState.currentPage < historyState.lastPage) {
+        loadTransactionHistory(historyState.currentPage + 1);
     }
 }
 
@@ -29,15 +100,32 @@ function renderTransactionHistory(transactions) {
     const countEl = document.getElementById('hist-count');
     if (!tbody) return;
 
-    if (countEl) countEl.textContent = `${transactions.length} transaksi tercatat`;
+    if (countEl) countEl.textContent = `${historyState.total} transaksi tercatat`;
 
     if (!transactions.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-12 text-gray-400 text-sm">Belum ada riwayat transaksi.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-gray-400 text-sm">
+            ${historyState.search ? 'Tidak ada transaksi yang cocok.' : 'Belum ada riwayat transaksi.'}
+        </td></tr>`;
         return;
     }
 
-    tbody.innerHTML = transactions.map(trx => `
-        <tr class="hover:bg-gray-50 transition-colors">
+    tbody.innerHTML = transactions.map(trx => {
+        const isVoided = trx.status === 'voided';
+        const statusBadge = isVoided
+            ? `<span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-red-50 text-red-600 border border-red-100">Dibatalkan</span>`
+            : `<span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Selesai</span>`;
+
+        const voidBtn = !isVoided
+            ? `<button onclick="SalonApp.openVoidModal(${trx.id},'${trx.invoice_number}')"
+                class="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors border border-amber-100"
+                title="Batalkan Transaksi">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                Void
+            </button>`
+            : '';
+
+        return `
+        <tr class="hover:bg-gray-50 transition-colors ${isVoided ? 'opacity-60' : ''}">
             <td class="px-6 py-3">
                 <span class="text-xs font-mono font-bold text-brand-purple bg-brand-purple-light px-2 py-0.5 rounded">${trx.invoice_number}</span>
             </td>
@@ -47,18 +135,86 @@ function renderTransactionHistory(transactions) {
             <td class="px-6 py-3">
                 <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-brand-purple-light text-brand-purple-dark">${trx.payment_method}</span>
             </td>
-            <td class="px-6 py-3 text-sm font-bold text-gray-800 text-right">${formatRupiah(trx.total_amount)}</td>
+            <td class="px-6 py-3 text-center">${statusBadge}</td>
+            <td class="px-6 py-3 text-sm font-bold text-gray-800 text-right ${isVoided ? 'line-through' : ''}">${formatRupiah(trx.total_amount)}</td>
             <td class="px-6 py-3 text-center">
-                <button onclick="SalonApp.printInvoice(${trx.id})"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-brand-purple bg-brand-purple-light hover:bg-brand-purple-mid/30 rounded-lg transition-colors"
-                    title="Cetak Invoice">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                    Invoice
-                </button>
+                <div class="flex items-center justify-center gap-1.5">
+                    <button onclick="SalonApp.printInvoice(${trx.id})"
+                        class="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold text-brand-purple bg-brand-purple-light hover:bg-brand-purple-mid/30 rounded-lg transition-colors"
+                        title="Cetak Invoice">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Invoice
+                    </button>
+                    ${voidBtn}
+                </div>
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
+
+/**
+ * Render pagination controls.
+ */
+function renderPagination(pagination) {
+    const paginationEl = document.getElementById('hist-pagination');
+    const pageInfo = document.getElementById('hist-page-info');
+    const pageNum = document.getElementById('hist-page-num');
+    const prevBtn = document.getElementById('hist-prev');
+    const nextBtn = document.getElementById('hist-next');
+
+    if (!paginationEl) return;
+
+    if (pagination.total > 0) {
+        paginationEl.classList.remove('hidden');
+        paginationEl.classList.add('flex');
+    } else {
+        paginationEl.classList.add('hidden');
+        paginationEl.classList.remove('flex');
+        return;
+    }
+
+    const start = ((pagination.current_page - 1) * pagination.per_page) + 1;
+    const end = Math.min(pagination.current_page * pagination.per_page, pagination.total);
+
+    if (pageInfo) pageInfo.textContent = `Menampilkan ${start}–${end} dari ${pagination.total} transaksi`;
+    if (pageNum) pageNum.textContent = `${pagination.current_page} / ${pagination.last_page}`;
+    if (prevBtn) prevBtn.disabled = pagination.current_page <= 1;
+    if (nextBtn) nextBtn.disabled = pagination.current_page >= pagination.last_page;
+}
+
+// ==================== VOID TRANSAKSI ====================
+
+export function openVoidModal(id, invoiceNumber) {
+    historyState.voidTargetId = id;
+    historyState.voidTargetInvoice = invoiceNumber;
+
+    const invoiceEl = document.getElementById('void-trx-invoice');
+    if (invoiceEl) invoiceEl.textContent = invoiceNumber;
+
+    const modal = document.getElementById('void-trx-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+export function closeVoidModal() {
+    const modal = document.getElementById('void-trx-modal');
+    if (modal) modal.classList.add('hidden');
+    historyState.voidTargetId = null;
+}
+
+export async function confirmVoidTransaction() {
+    if (!historyState.voidTargetId) return;
+
+    try {
+        await voidTransaction(historyState.voidTargetId);
+        showToast(`Transaksi ${historyState.voidTargetInvoice} berhasil dibatalkan.`);
+        closeVoidModal();
+        loadTransactionHistory(historyState.currentPage);
+    } catch (error) {
+        showToast('Gagal membatalkan transaksi: ' + error.message, 'error');
+    }
+}
+
+// ==================== INVOICE / CETAK ====================
 
 /**
  * Cetak invoice untuk transaksi tertentu.
@@ -104,6 +260,11 @@ function openInvoiceWindow(trx) {
             <td style="padding:4px 0;text-align:right;font-size:12px;color:#888">${formatRupiah(trx.cash_change)}</td>
         </tr>` : '';
 
+    const voidedBanner = trx.status === 'voided' ? `
+        <div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:8px;text-align:center;margin-bottom:16px;color:#dc2626;font-weight:700;font-size:14px">
+            ❌ TRANSAKSI DIBATALKAN
+        </div>` : '';
+
     const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -116,6 +277,7 @@ function openInvoiceWindow(trx) {
     </style>
 </head>
 <body>
+    ${voidedBanner}
     <div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px dashed #ddd">
         <div style="font-size:22px;font-weight:700;color:#9736c4;margin-bottom:2px">♥ Melly Salon</div>
         <div style="font-size:11px;color:#888;letter-spacing:1px">BEAUTY & WELLNESS</div>

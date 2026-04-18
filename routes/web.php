@@ -9,7 +9,7 @@ use App\Http\Controllers\ReportController;
 
 // ==================== AUTH ROUTES ====================
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ==================== PROTECTED ROUTES ====================
@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index']);
     Route::post('/transactions', [TransactionController::class, 'store']);
     Route::get('/transactions/{id}', [TransactionController::class, 'show']);
+    Route::patch('/transactions/{id}/void', [TransactionController::class, 'void']);
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index']);

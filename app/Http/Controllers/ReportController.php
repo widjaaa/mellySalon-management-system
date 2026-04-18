@@ -127,11 +127,8 @@ class ReportController extends Controller
         }
 
         // Member yang ulang tahun bulan ini
-        $currentMonth = strtolower($today->format('M'));
-        $monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-        $birthdayMembers = Member::where(function ($query) use ($currentMonth) {
-            $query->where(DB::raw('LOWER(bday)'), 'like', "%{$currentMonth}%");
-        })->get();
+        $currentMonth = $today->month;
+        $birthdayMembers = Member::whereMonth('bday', $currentMonth)->get();
 
         return response()->json([
             'success' => true,

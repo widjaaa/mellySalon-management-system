@@ -9,6 +9,34 @@ import { formatRupiah, showToast } from './utils.js';
 import { createMember, updateMember, deleteMember } from './api.js';
 import { populateServiceSelect } from './payment.js';
 
+/**
+ * Format tanggal lahir untuk display.
+ */
+function formatBirthday(bday) {
+    if (!bday) return '';
+    try {
+        const d = new Date(bday);
+        if (isNaN(d.getTime())) return bday;
+        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    } catch {
+        return bday;
+    }
+}
+
+/**
+ * Format tanggal lahir untuk input date (YYYY-MM-DD).
+ */
+function formatBdayForInput(bday) {
+    if (!bday) return '';
+    try {
+        const d = new Date(bday);
+        if (isNaN(d.getTime())) return '';
+        return d.toISOString().split('T')[0];
+    } catch {
+        return '';
+    }
+}
+
 const TIER_STYLES = {
     Gold:   { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-700', dot: 'bg-yellow-400', badge: 'bg-yellow-100 text-yellow-800' },
     Silver: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-600', dot: 'bg-gray-400', badge: 'bg-gray-100 text-gray-700' },
@@ -54,7 +82,7 @@ export function renderMembers(filter = 'all') {
                     </div>
                     <div class="flex items-center gap-3 text-xs text-gray-500">
                         ${member.phone ? `<span>📱 ${member.phone}</span>` : ''}
-                        ${member.bday ? `<span>🎂 ${member.bday}</span>` : ''}
+                        ${member.bday ? `<span>🎂 ${formatBirthday(member.bday)}</span>` : ''}
                     </div>
 
                     <!-- Poin Bar -->
@@ -149,7 +177,7 @@ export function openEditMember(id) {
     document.getElementById('m-name').value = member.name;
     document.getElementById('m-phone').value = member.phone;
     document.getElementById('m-tier').value = member.tier;
-    document.getElementById('m-bday').value = member.bday;
+    document.getElementById('m-bday').value = formatBdayForInput(member.bday);
     document.getElementById('mem-modal').classList.remove('hidden');
 }
 

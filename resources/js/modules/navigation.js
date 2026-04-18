@@ -39,6 +39,14 @@ export function goPage(pageId, navItem) {
     if (navItem) {
         document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
         navItem.classList.add('active');
+
+        // Auto close mobile sidebar
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (sidebar && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('active');
+        }
     }
 
     // Update page title
@@ -85,10 +93,7 @@ export function initDateDisplay() {
  */
 export function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    if (sidebar) {
-        sidebar.classList.toggle('hidden');
-        sidebar.classList.toggle('fixed');
-        sidebar.classList.toggle('inset-0');
-        sidebar.classList.toggle('z-50');
-    }
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar) sidebar.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('active');
 }

@@ -17,6 +17,7 @@
 
   <div class="flex w-full h-full">
     @include('partials.sidebar')
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="SalonApp.toggleSidebar()"></div>
 
     <!-- MAIN -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden relative">

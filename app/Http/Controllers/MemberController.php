@@ -16,7 +16,7 @@ class MemberController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'tier' => 'in:Bronze,Silver,Gold',
-            'bday' => 'nullable|string|max:20',
+            'bday' => 'nullable|date',
         ]);
 
         $member = Member::create($validatedData);
@@ -37,7 +37,7 @@ class MemberController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'tier' => 'in:Bronze,Silver,Gold',
-            'bday' => 'nullable|string|max:20',
+            'bday' => 'nullable|date',
         ]);
 
         $member = Member::findOrFail($id);

@@ -14,121 +14,148 @@
   --font-serif: "Playfair Display", serif;
 }
 
+/**
+ * =============================================================
+ * Melly Salon Management System — Main Stylesheet
+ * =============================================================
+ *
+ * Hanya berisi styles yang TIDAK bisa ditangani Tailwind:
+ *   1. Page visibility (SPA-style navigation)
+ *   2. Modal animations
+ *   3. QRIS-specific animations
+ *   4. Active tab styles (dynamic JS classes)
+ *   5. Responsive sidebar behavior
+ */
+
+
 /* ==========================================================================
-   BASE
+   1. PAGE VISIBILITY — SPA Navigation
    ========================================================================== */
 
-* { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-
-/* ==========================================================================
-   PAGE VISIBILITY (SPA navigation)
-   ========================================================================== */
-
-.page { display: none; }
-.page.active { display: block; }
-
-/* ==========================================================================
-   ANIMATIONS
-   ========================================================================== */
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+.page {
+  display: none;
 }
 
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.page.active {
+  display: block;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.35s ease-out;
+
+/* ==========================================================================
+   2. ANIMATIONS — Modals & Transitions
+   ========================================================================== */
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .animate-modal-in {
-  animation: modalIn 0.2s ease-out;
+  animation: modalSlideIn .2s ease;
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp .3s ease;
+}
+
+
 /* ==========================================================================
-   TOAST ANIMATION
+   3. QRIS ANIMATIONS
    ========================================================================== */
 
-#toast {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+@keyframes pingSlow {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  75%, 100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
 }
 
+.animate-ping-slow {
+  animation: pingSlow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.qris-success-checkmark svg {
+  animation: fadeInUp .5s ease;
+}
+
+.qris-check-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawCheck .6s ease forwards .3s;
+}
+
+@keyframes drawCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+
 /* ==========================================================================
-   TAB BUTTON ACTIVE STATE
+   4. ACTIVE TAB / FILTER STYLES — Driven by JS
    ========================================================================== */
 
 .tab-btn.active,
-.report-tab.active {
-  background-color: var(--color-brand-purple) !important;
-  color: white !important;
-  border-color: var(--color-brand-purple) !important;
+.report-tab.active,
+.hist-status-btn.active {
+  background: var(--color-brand-purple);
+  color: white;
+  border-color: var(--color-brand-purple);
 }
+
 
 /* ==========================================================================
-   SCROLLBAR STYLING
+   5. RESPONSIVE — Mobile Sidebar Overlay
    ========================================================================== */
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* ==========================================================================
-   PRINT STYLES
-   ========================================================================== */
-
-@media print {
-  body * {
-    visibility: hidden;
-  }
-
-  #page-report,
-  #page-report * {
-    visibility: visible;
-  }
-
-  #page-report {
-    position: absolute;
-    left: 0;
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed;
+    left: -100%;
     top: 0;
-    width: 100%;
+    bottom: 0;
+    z-index: 50;
+    transition: left .3s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, .15);
   }
 
-  /* Hide non-printable elements */
-  .no-print,
-  nav,
-  button,
-  #sidebar,
-  .topbar {
-    display: none !important;
+  #sidebar.open {
+    left: 0;
   }
-}
-
-/* ==========================================================================
-   MODAL BG (legacy class used by JS for toggle)
-   ========================================================================== */
-
-.modal-bg {
-  /* just a marker class, actual styles are inline in Tailwind */
-}
-
-.modal-bg.hidden {
-  display: none !important;
 }

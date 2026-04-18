@@ -122,13 +122,17 @@ class TransactionController extends Controller
     }
 
     /**
-     * Ambil daftar transaksi (untuk riwayat).
+     * Ambil daftar transaksi (untuk riwayat) — dengan search & pagination.
      */
     public function index(Request $request)
     {
         $query = Transaction::with(['items', 'member'])
-            ->where('status', 'completed')
             ->orderBy('created_at', 'desc');
+
+        // Filter by status (default: semua)
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
 
         // Filter by date range
         if ($request->has('from')) {
@@ -138,11 +142,28 @@ class TransactionController extends Controller
             $query->whereDate('created_at', '<=', $request->to);
         }
 
-        $transactions = $query->limit(100)->get();
+        // Search by customer name or invoice number
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('invoice_number', 'like', "%{$search}%");
+            });
+        }
+
+        // Pagination
+        $perPage = $request->get('per_page', 15);
+        $transactions = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $transactions,
+            'data' => $transactions->items(),
+            'pagination' => [
+                'current_page' => $transactions->currentPage(),
+                'last_page' => $transactions->lastPage(),
+                'per_page' => $transactions->perPage(),
+                'total' => $transactions->total(),
+            ],
         ]);
     }
 
@@ -157,5 +178,50 @@ class TransactionController extends Controller
             'success' => true,
             'data' => $transaction,
         ]);
+    }
+
+    /**
+     * Void / batalkan transaksi.
+     */
+    public function void($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+
+        if ($transaction->status === 'voided') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi ini sudah dibatalkan sebelumnya.',
+            ], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Batalkan poin & spending member jika ada
+            if ($transaction->member_id) {
+                $member = Member::find($transaction->member_id);
+                if ($member) {
+                    $member->poin = max(0, $member->poin - $transaction->poin_awarded);
+                    $member->total_visits = max(0, $member->total_visits - 1);
+                    $member->total_spent = max(0, $member->total_spent - $transaction->total_amount);
+                    $member->save();
+                }
+            }
+
+            $transaction->status = 'voided';
+            $transaction->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaksi berhasil dibatalkan.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membatalkan transaksi: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

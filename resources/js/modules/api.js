@@ -27,8 +27,7 @@ async function apiRequest(url, method = 'GET', body = null) {
         throw new Error(message);
     }
 
-    const result = await response.json();
-    return result.data !== undefined ? result.data : result;
+    return await response.json();
 }
 
 // ==================== SERVICES API ====================
@@ -72,15 +71,22 @@ export async function fetchTransactions(params = {}) {
 }
 
 export async function fetchTransactionDetail(id) {
-    return apiRequest(`/transactions/${id}`);
+    const result = await apiRequest(`/transactions/${id}`);
+    return result.data !== undefined ? result.data : result;
+}
+
+export async function voidTransaction(id) {
+    return apiRequest(`/transactions/${id}/void`, 'PATCH');
 }
 
 // ==================== REPORTS API ====================
 
 export async function fetchReportData(period = 'harian') {
-    return apiRequest(`/reports?period=${period}`);
+    const result = await apiRequest(`/reports?period=${period}`);
+    return result.data !== undefined ? result.data : result;
 }
 
 export async function fetchPerformanceData() {
-    return apiRequest('/reports/performance');
+    const result = await apiRequest(`/reports/performance`);
+    return result.data !== undefined ? result.data : result;
 }

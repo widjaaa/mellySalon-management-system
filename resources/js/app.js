@@ -21,6 +21,8 @@ import {
     setCashAmount,
     copyAccountNumber,
     processPayment,
+    confirmQrisPayment,
+    cancelQrisPayment,
 } from './modules/payment.js';
 import {
     renderMembers,
@@ -53,6 +55,13 @@ import {
 } from './modules/reports.js';
 import {
     loadTransactionHistory,
+    searchTransactionHistory,
+    filterTransactionStatus,
+    histPrevPage,
+    histNextPage,
+    openVoidModal,
+    closeVoidModal,
+    confirmVoidTransaction,
     printInvoice,
 } from './modules/invoice.js';
 
@@ -71,6 +80,8 @@ window.SalonApp = {
     setCashAmount,
     copyAccountNumber,
     processPayment,
+    confirmQrisPayment,
+    cancelQrisPayment,
 
     // Members
     filterMember,
@@ -97,9 +108,18 @@ window.SalonApp = {
     exportCSV,
     printReport,
 
-    // Invoice
+    // Invoice & Riwayat
     printInvoice,
     loadTransactionHistory,
+    searchTransactionHistory,
+    filterTransactionStatus,
+    histPrevPage,
+    histNextPage,
+
+    // Void Transaksi
+    openVoidModal,
+    closeVoidModal,
+    confirmVoidTransaction,
 
     // Utils
     showToast,
@@ -135,6 +155,7 @@ function setupModalBackgroundClose() {
         { id: 'del-modal', closeFn: closeDeleteModal },
         { id: 'mem-modal', closeFn: closeMemberModal },
         { id: 'del-mem-modal', closeFn: closeDeleteMemberModal },
+        { id: 'void-trx-modal', closeFn: closeVoidModal },
     ];
 
     modals.forEach(({ id, closeFn }) => {

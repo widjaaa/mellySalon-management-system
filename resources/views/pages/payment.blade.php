@@ -89,12 +89,68 @@
       </div>
 
       <!-- QRIS SECTION -->
-      <div id="qris-section" class="hidden mb-8 text-center bg-gray-50 rounded-2xl p-6 border border-gray-100">
-        <div class="font-bold text-brand-purple text-lg mb-4">QRIS Melly Salon</div>
-        <div class="bg-white border-2 border-brand-purple-light p-3 inline-block rounded-2xl mb-4 shadow-sm">
-          <img src="{{ asset('images/qris.jpeg') }}" class="w-48 h-auto block rounded-xl object-contain shadow-sm bg-white" alt="QRIS" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm\'>QR Code</div>'">
+      <div id="qris-section" class="hidden mb-8">
+        <!-- QRIS Waiting State -->
+        <div id="qris-waiting" class="text-center bg-gray-50 rounded-2xl p-6 border border-gray-100">
+          <div class="font-bold text-brand-purple text-lg mb-1">QRIS Melly Salon</div>
+          <div class="text-xs text-gray-400 mb-4">Minta pelanggan scan kode di bawah ini</div>
+
+          <!-- QR Code with pulse ring -->
+          <div class="relative inline-block mb-4">
+            <div class="absolute inset-0 rounded-2xl border-2 border-brand-purple/30 animate-ping-slow"></div>
+            <div class="bg-white border-2 border-brand-purple-light p-3 inline-block rounded-2xl shadow-sm relative z-10">
+              <img src="{{ asset('images/qris.jpeg') }}" class="w-48 h-auto block rounded-xl object-contain shadow-sm bg-white" alt="QRIS" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm\'>QR Code</div>'">
+            </div>
+          </div>
+
+          <!-- Status indicator -->
+          <div class="flex items-center justify-center gap-2 mb-4">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+            </span>
+            <span class="text-sm font-semibold text-amber-600">Menunggu Pembayaran...</span>
+          </div>
+
+          <!-- Timer -->
+          <div class="mb-5">
+            <div class="text-xs text-gray-400 uppercase tracking-widest mb-1">Waktu Tersisa</div>
+            <div id="qris-timer" class="text-2xl font-black text-gray-800 font-mono tracking-widest">05:00</div>
+            <div class="w-48 mx-auto mt-2 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+              <div id="qris-timer-bar" class="h-full bg-gradient-to-r from-brand-purple to-brand-purple-dark rounded-full transition-all duration-1000" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <!-- Total amount to pay -->
+          <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 inline-block mb-5 shadow-sm">
+            <div class="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Total Pembayaran</div>
+            <div id="qris-total-display" class="text-xl font-black text-brand-purple">Rp 0</div>
+          </div>
+
+          <!-- Confirm button -->
+          <div class="space-y-3">
+            <button id="qris-confirm-btn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transform hover:-translate-y-0.5 transition-all focus:outline-none flex justify-center items-center gap-2" onclick="SalonApp.confirmQrisPayment()">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Konfirmasi Pembayaran Diterima
+            </button>
+            <button class="w-full bg-white border border-gray-200 text-gray-500 font-semibold py-2.5 px-6 rounded-xl hover:bg-gray-50 transition-all focus:outline-none text-sm" onclick="SalonApp.cancelQrisPayment()">
+              Batalkan
+            </button>
+          </div>
         </div>
-        <div class="text-xs font-medium text-gray-500 max-w-[200px] mx-auto leading-relaxed">Minta pelanggan scan kode ini dengan aplikasi e-Wallet atau M-Banking mereka.</div>
+
+        <!-- QRIS Success State (hidden by default) -->
+        <div id="qris-success" class="hidden text-center bg-emerald-50 rounded-2xl p-8 border border-emerald-200">
+          <div class="qris-success-checkmark mx-auto mb-4">
+            <svg class="w-20 h-20 text-emerald-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path class="qris-check-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="text-2xl font-black text-emerald-700 mb-2">Pembayaran QRIS Berhasil! ✅</div>
+          <div class="text-sm text-emerald-600 font-medium mb-1">Dana telah diterima</div>
+          <div id="qris-success-amount" class="text-xl font-bold text-emerald-800 mb-4"></div>
+          <div class="text-xs text-emerald-500">Transaksi sedang diproses...</div>
+        </div>
       </div>
 
       <!-- TRANSFER SECTION -->
