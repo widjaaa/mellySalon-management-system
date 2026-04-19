@@ -49,4 +49,21 @@ class Member extends Model
             default => 0,
         };
     }
+
+    /**
+     * Hitung ulang tier member berdasarkan total poin:
+     * - \>= 10000 -> Gold
+     * - \>= 5000 -> Silver
+     * - < 5000 -> Bronze
+     */
+    public function updateTierBasedOnPoin(): void
+    {
+        if ($this->poin >= 10000) {
+            $this->tier = 'Gold';
+        } elseif ($this->poin >= 5000) {
+            $this->tier = 'Silver';
+        } else {
+            $this->tier = 'Bronze';
+        }
+    }
 }

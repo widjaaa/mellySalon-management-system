@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Melly Salon — Sistem Manajemen</title>
   <meta name="description" content="Sistem Manajemen Salon Kecantikan Melly Salon">
+  <link rel="icon" type="image/png" href="{{ asset('images/logo_salon_web.png') }}" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <link
@@ -13,7 +14,8 @@
     rel="stylesheet">
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans flex h-screen overflow-hidden selection:bg-brand-purple selection:text-white">
+<body
+  class="bg-gray-50 text-gray-800 font-sans flex h-screen overflow-hidden selection:bg-brand-purple selection:text-white">
 
   <div class="flex w-full h-full">
     @include('partials.sidebar')

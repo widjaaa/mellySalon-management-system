@@ -47,7 +47,7 @@ class TransactionController extends Controller
 
         // Validasi diskon jika member
         $discountAmount = 0;
-        if ($validatedData['member_id']) {
+        if (!empty($validatedData['member_id'])) {
             $member = Member::find($validatedData['member_id']);
             if ($member) {
                 $discountPercent = $member->getDiscountPercent();
@@ -68,7 +68,7 @@ class TransactionController extends Controller
             // Buat transaksi
             $transaction = Transaction::create([
                 'invoice_number' => Transaction::generateInvoiceNumber(),
-                'member_id' => $validatedData['member_id'],
+                'member_id' => $validatedData['member_id'] ?? null,
                 'customer_name' => $validatedData['customer_name'],
                 'services_summary' => $validatedData['services_summary'],
                 'subtotal' => $calculatedSubtotal,
@@ -92,12 +92,13 @@ class TransactionController extends Controller
             }
 
             // Update data member jika ada
-            if ($validatedData['member_id']) {
+            if (!empty($validatedData['member_id'])) {
                 $member = Member::find($validatedData['member_id']);
                 if ($member) {
                     $member->poin += $transaction->poin_awarded;
                     $member->total_visits += 1;
                     $member->total_spent += $transaction->total_amount;
+                    $member->updateTierBasedOnPoin();
                     $member->save();
                 }
             }
@@ -203,6 +204,7 @@ class TransactionController extends Controller
                     $member->poin = max(0, $member->poin - $transaction->poin_awarded);
                     $member->total_visits = max(0, $member->total_visits - 1);
                     $member->total_spent = max(0, $member->total_spent - $transaction->total_amount);
+                    $member->updateTierBasedOnPoin();
                     $member->save();
                 }
             }

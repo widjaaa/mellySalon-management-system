@@ -152,5 +152,66 @@
   </div>
 </div>
 
+<!-- MODAL INVENTARIS (STOK) -->
+<div class="modal-bg hidden" id="inv-modal">
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4" onclick="if(event.target===this)SalonApp.closeInventoryModal()">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-modal-in">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-800" id="inv-modal-title">Tambah Barang Inventaris</h3>
+        <button onclick="SalonApp.closeInventoryModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nama Barang *</label>
+          <input type="text" id="i-name" placeholder="cth: Shampo Pantene..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-gray-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Stok Awal Fisik *</label>
+            <input type="number" id="i-stock" placeholder="0" min="0" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-gray-400">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Satuan *</label>
+            <select id="i-unit" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+              <option value="Botol">Botol</option>
+              <option value="Tube">Tube</option>
+              <option value="Pcs">Pcs</option>
+              <option value="Sachet">Sachet</option>
+              <option value="Pax">Pax</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors" onclick="SalonApp.closeInventoryModal()">Batal</button>
+        <button class="px-5 py-2.5 text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 rounded-xl transition-colors shadow-md shadow-emerald-500/20" onclick="SalonApp.saveInventory()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HAPUS INVENTARIS -->
+<div class="modal-bg hidden" id="del-inv-modal">
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4" onclick="if(event.target===this)SalonApp.closeDeleteInventoryModal()">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-modal-in">
+      <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+      </div>
+      <h3 class="text-lg font-bold text-gray-800 text-center mb-2">Hapus Barang?</h3>
+      <p class="text-sm text-gray-500 text-center mb-6">Barang <strong id="del-inv-name" class="text-gray-800"></strong> akan dihapus permanen. Lanjutkan?</p>
+      <div class="flex gap-3">
+        <button class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors" onclick="SalonApp.closeDeleteInventoryModal()">Batal</button>
+        <button class="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors shadow-md" onclick="SalonApp.confirmDeleteInventory()">Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-xl text-sm font-medium shadow-xl opacity-0 translate-y-2 transition-all duration-300 pointer-events-none z-[999]"></div>

@@ -5,8 +5,9 @@
  */
 
 import { state } from './state.js';
-import { formatRupiah, showToast, formatTime } from './utils.js';
+import { formatRupiah, showToast, formatTime, formatDate } from './utils.js';
 import { fetchReportData } from './api.js';
+import * as XLSX from 'xlsx';
 
 /**
  * Render laporan dari API.
@@ -118,27 +119,59 @@ export function setReportPeriod(period, element) {
 }
 
 /**
- * Export CSV.
+ * Export ke Excel (.xlsx) murni.
  */
-export function exportCSV() {
+export function exportExcel() {
     if (!state.reportData || !state.reportData.transactions.length) {
         showToast('Tidak ada data untuk diekspor.', 'error');
         return;
     }
 
-    const header = 'Waktu,Pelanggan,Layanan,Metode,Member,Total\n';
-    const rows = state.reportData.transactions.map(trx => {
-        const time = formatTime(trx.created_at);
-        return `${time},"${trx.customer_name}","${trx.services_summary}",${trx.payment_method},${trx.member_id ? 'Ya' : 'Tidak'},${trx.total_amount}`;
-    }).join('\n');
+    // 1. Siapkan header tabel
+    const excelData = [
+        ['Tanggal', 'Pelanggan', 'Layanan', 'Metode', 'Member', 'Total']
+    ];
 
-    const blob = new Blob(['\uFEFF' + header + rows], { type: 'text/csv;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `laporan-melly-salon-${state.reportPeriod}.csv`;
-    link.click();
+    // 2. Isi data row dari transactions
+    state.reportData.transactions.forEach(trx => {
+        const date = formatDate(trx.created_at);
+        excelData.push([
+            date, 
+            trx.customer_name, 
+            trx.services_summary, 
+            trx.payment_method, 
+            trx.member_id ? 'Ya' : 'Tidak', 
+            trx.total_amount
+        ]);
+    });
 
-    showToast('File CSV berhasil diunduh!');
+    // Tambahkan baris kosong dan baris Total Pendapatan
+    excelData.push([]);
+    excelData.push([
+        '', '', '', '', 'TOTAL PENDAPATAN:', state.reportData.summary.total_revenue
+    ]);
+
+    // 3. Konversi array ke format worksheet SheetJS
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+    // Styling simpel (opsional/tergantung versi xlsx)
+    ws['!cols'] = [
+        { wch: 15 }, // Tanggal
+        { wch: 25 }, // Pelanggan
+        { wch: 40 }, // Layanan
+        { wch: 15 }, // Metode
+        { wch: 20 }, // Member (diperlebar untuk teks TOTAL PENDAPATAN)
+        { wch: 15 }  // Total
+    ];
+
+    // 4. Buat Workbook baru
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan Transaksi");
+
+    // 5. Trigger download file Excel (.xlsx)
+    XLSX.writeFile(wb, `Laporan_Melly_Salon_${state.reportPeriod}.xlsx`);
+
+    showToast('File Excel berhasil diunduh!');
 }
 
 /**

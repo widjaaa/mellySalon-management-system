@@ -6,6 +6,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\InventoryController;
 
 // ==================== AUTH ROUTES ====================
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -40,4 +41,10 @@ Route::middleware('auth')->group(function () {
     // Reports
     Route::get('/reports', [ReportController::class, 'index']);
     Route::get('/reports/performance', [ReportController::class, 'performance']);
+
+    // Inventories CRUD
+    Route::get('/inventories', [InventoryController::class, 'index']);
+    Route::post('/inventories', [InventoryController::class, 'store']);
+    Route::put('/inventories/{id}', [InventoryController::class, 'update']);
+    Route::delete('/inventories/{id}', [InventoryController::class, 'destroy']);
 });

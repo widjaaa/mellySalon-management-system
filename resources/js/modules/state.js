@@ -52,6 +52,9 @@ const state = {
 
     /** @type {Object|null} Data laporan */
     reportData: null,
+
+    /** @type {Array<Object>} Data inventaris stok */
+    inventories: [],
 };
 
 /**

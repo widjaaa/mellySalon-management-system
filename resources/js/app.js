@@ -50,7 +50,7 @@ import {
 import {
     renderReport,
     setReportPeriod,
-    exportCSV,
+    exportExcel,
     printReport,
 } from './modules/reports.js';
 import {
@@ -63,7 +63,20 @@ import {
     closeVoidModal,
     confirmVoidTransaction,
     printInvoice,
+    sendWhatsAppReceipt,
 } from './modules/invoice.js';
+import {
+    renderInventories,
+    searchInventory,
+    openInventoryModal,
+    openEditInventory,
+    closeInventoryModal,
+    saveInventory,
+    adjustInventoryStock,
+    openDeleteInventory,
+    closeDeleteInventoryModal,
+    confirmDeleteInventory,
+} from './modules/inventory.js';
 
 // ==================== Expose ke Window ====================
 window.SalonApp = {
@@ -105,11 +118,12 @@ window.SalonApp = {
 
     // Reports
     setReportPeriod,
-    exportCSV,
+    exportExcel,
     printReport,
 
     // Invoice & Riwayat
     printInvoice,
+    sendWhatsAppReceipt,
     loadTransactionHistory,
     searchTransactionHistory,
     filterTransactionStatus,
@@ -120,6 +134,17 @@ window.SalonApp = {
     openVoidModal,
     closeVoidModal,
     confirmVoidTransaction,
+
+    // Inventaris
+    searchInventory,
+    openInventoryModal,
+    openEditInventory,
+    closeInventoryModal,
+    saveInventory,
+    adjustInventoryStock,
+    openDeleteInventory,
+    closeDeleteInventoryModal,
+    confirmDeleteInventory,
 
     // Utils
     showToast,
@@ -139,6 +164,7 @@ window.SalonApp.initialize = function (serverData) {
     // 4. Render data awal
     populateServiceSelect();
     renderMemberDatalist();
+    renderInventories();
 
     // 5. Setup event listener modal
     setupModalBackgroundClose();
@@ -156,6 +182,8 @@ function setupModalBackgroundClose() {
         { id: 'mem-modal', closeFn: closeMemberModal },
         { id: 'del-mem-modal', closeFn: closeDeleteMemberModal },
         { id: 'void-trx-modal', closeFn: closeVoidModal },
+        { id: 'inv-modal', closeFn: closeInventoryModal },
+        { id: 'del-inv-modal', closeFn: closeDeleteInventoryModal },
     ];
 
     modals.forEach(({ id, closeFn }) => {

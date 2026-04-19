@@ -67,7 +67,19 @@ export function renderMembers(filter = 'all') {
 
     container.innerHTML = filtered.map(member => {
         const style = TIER_STYLES[member.tier] || TIER_STYLES.Bronze;
-        const poinPercent = Math.min(100, (member.poin / 5000) * 100);
+        
+        let targetPoin = 5000;
+        let targetText = '/ 5.000';
+        let poinPercent = Math.min(100, (member.poin / 5000) * 100);
+        
+        if (member.tier === 'Silver') {
+            targetPoin = 10000;
+            targetText = '/ 10.000';
+            poinPercent = Math.min(100, (member.poin / 10000) * 100);
+        } else if (member.tier === 'Gold') {
+            targetText = 'Max Tier';
+            poinPercent = 100;
+        }
 
         return `
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all">
@@ -89,7 +101,7 @@ export function renderMembers(filter = 'all') {
                     <div class="mt-3">
                         <div class="flex justify-between text-xs mb-1">
                             <span class="font-semibold text-brand-purple">${member.poin.toLocaleString('id-ID')} poin</span>
-                            <span class="text-gray-400">/ 5.000</span>
+                            <span class="text-gray-400">${targetText}</span>
                         </div>
                         <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                             <div class="h-full bg-gradient-to-r from-brand-purple to-brand-purple-mid rounded-full transition-all duration-500" style="width:${poinPercent}%"></div>
@@ -209,14 +221,15 @@ export async function saveMember() {
         if (state.editMemberId) {
             // Edit existing
             const updated = await updateMember(state.editMemberId, memberData);
+            const updatedObj = updated.data || updated;
             const idx = state.members.findIndex(m => m.id === state.editMemberId);
             if (idx !== -1) {
                 state.members[idx] = {
                     ...state.members[idx],
-                    name: updated.name || name,
-                    phone: updated.phone || phone,
-                    tier: updated.tier || tier,
-                    bday: updated.bday || bday,
+                    name: updatedObj.name || name,
+                    phone: updatedObj.phone || phone,
+                    tier: updatedObj.tier || tier,
+                    bday: updatedObj.bday || bday,
                     initials: name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2),
                 };
             }
@@ -224,16 +237,17 @@ export async function saveMember() {
         } else {
             // Create new
             const created = await createMember(memberData);
+            const memberObj = created.data || created;
             state.members.push({
-                id: created.id,
-                name: created.name || name,
+                id: memberObj.id,
+                name: memberObj.name || name,
                 initials: name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2),
-                tier: created.tier || tier,
+                tier: memberObj.tier || tier,
                 poin: 0,
                 total: 0,
                 spent: 0,
-                bday: created.bday || bday,
-                phone: created.phone || phone,
+                bday: memberObj.bday || bday,
+                phone: memberObj.phone || phone,
             });
             showToast('Member berhasil ditambahkan!');
         }

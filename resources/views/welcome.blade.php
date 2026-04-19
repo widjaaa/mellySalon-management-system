@@ -13,6 +13,9 @@
   <!-- ===== KELOLA LAYANAN ===== -->
   @include('pages.services')
 
+  <!-- ===== INVENTARIS ===== -->
+  @include('pages.inventory')
+
   <!-- ===== LAPORAN ===== -->
   @include('pages.report')
 

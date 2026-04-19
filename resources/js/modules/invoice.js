@@ -139,6 +139,12 @@ function renderTransactionHistory(transactions) {
             <td class="px-6 py-3 text-sm font-bold text-gray-800 text-right ${isVoided ? 'line-through' : ''}">${formatRupiah(trx.total_amount)}</td>
             <td class="px-6 py-3 text-center">
                 <div class="flex items-center justify-center gap-1.5">
+                    <button onclick="SalonApp.sendWhatsAppReceipt(${trx.id})"
+                        class="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
+                        title="Kirim ke WhatsApp">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        WA
+                    </button>
                     <button onclick="SalonApp.printInvoice(${trx.id})"
                         class="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold text-brand-purple bg-brand-purple-light hover:bg-brand-purple-mid/30 rounded-lg transition-colors"
                         title="Cetak Invoice">
@@ -279,9 +285,9 @@ function openInvoiceWindow(trx) {
 <body>
     ${voidedBanner}
     <div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px dashed #ddd">
-        <div style="font-size:22px;font-weight:700;color:#9736c4;margin-bottom:2px">♥ Melly Salon</div>
-        <div style="font-size:11px;color:#888;letter-spacing:1px">BEAUTY & WELLNESS</div>
-        <div style="font-size:11px;color:#999;margin-top:6px">Jl. Contoh Alamat No. 123</div>
+        <div style="font-size:22px;font-weight:700;color:#9736c4;margin-bottom:2px">Melly Salon</div>
+        <div style="font-size:11px;color:#888;letter-spacing:1px">Sanggar Wedding & Kecantikan</div>
+        <div style="font-size:11px;color:#999;margin-top:6px">Perum Bumi Cikarang Makmur, Blok EII No. 15, Cikarang Selatan, Bekasi</div>
     </div>
 
     <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:12px;color:#666">
@@ -326,7 +332,7 @@ function openInvoiceWindow(trx) {
         <div style="font-size:12px;color:#666;margin-bottom:2px">Metode Pembayaran: <strong>${trx.payment_method}</strong></div>
         ${trx.poin_awarded > 0 ? `<div style="font-size:11px;color:#9736c4;font-weight:600;margin-top:4px">+${trx.poin_awarded} poin diberikan</div>` : ''}
         <div style="font-size:11px;color:#aaa;margin-top:12px">Terima kasih telah berkunjung! ♥</div>
-        <div style="font-size:10px;color:#ccc;margin-top:4px">www.mellysalon.com</div>
+        <div style="font-size:10px;color:#ccc;margin-top:4px">Instagram: wedding_melly_group</div>
     </div>
 
     <script>window.onload=function(){window.print()}<\/script>
@@ -336,4 +342,80 @@ function openInvoiceWindow(trx) {
     const printWindow = window.open('', '_blank', 'width=450,height=700');
     printWindow.document.write(html);
     printWindow.document.close();
+}
+
+/**
+ * Kirim struk (receipt) ke WhatsApp via tautan wa.me
+ */
+export async function sendWhatsAppReceipt(transactionId) {
+    try {
+        const trx = await fetchTransactionDetail(transactionId);
+        
+        let phoneNumber = '';
+        if (trx.member && trx.member.phone) {
+            phoneNumber = trx.member.phone;
+            // Jika diawali 0, ubah ke 62
+            if (phoneNumber.startsWith('0')) {
+                phoneNumber = '62' + phoneNumber.substring(1);
+            }
+        }
+
+        if (!phoneNumber) {
+            const userInput = prompt(`Nomor HP pelanggan (contoh: 08123... atau 62812...)\nKosongkan jika ingin memilih manual di WhatsApp:`);
+            if (userInput !== null) {
+                phoneNumber = userInput.trim();
+                if (phoneNumber.startsWith('0')) {
+                    phoneNumber = '62' + phoneNumber.substring(1);
+                }
+            } else {
+                return; // User clicked Cancel
+            }
+        }
+
+        const date = new Date(trx.created_at);
+        const dateStr = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        
+        // Build the message
+        let msg = `*MELLY SALON* — Struk Pembayaran\n`;
+        msg += `Jl. Perum Bumi Cikarang Makmur, Bekasi\n`;
+        msg += `--------------------------------------\n`;
+        msg += `No. Inv : ${trx.invoice_number}\n`;
+        msg += `Tanggal : ${dateStr}\n`;
+        msg += `Pelanggan: ${trx.customer_name}\n`;
+        if (trx.member) {
+            msg += `Status  : Member ${trx.member.tier}\n`;
+        }
+        msg += `--------------------------------------\n`;
+        
+        // Items
+        trx.items.forEach(item => {
+            msg += `▪ ${item.service_name}\n`;
+            msg += `  ${item.quantity} x Rp ${item.service_price.toLocaleString('id-ID')} = Rp ${(item.quantity * item.service_price).toLocaleString('id-ID')}\n`;
+        });
+        
+        msg += `--------------------------------------\n`;
+        msg += `Subtotal : Rp ${trx.subtotal.toLocaleString('id-ID')}\n`;
+        
+        if (trx.discount_amount > 0) {
+            msg += `Diskon   : -Rp ${trx.discount_amount.toLocaleString('id-ID')}\n`;
+        }
+        
+        msg += `*TOTAL    : Rp ${trx.total_amount.toLocaleString('id-ID')}*\n`;
+        msg += `Metode   : ${trx.payment_method}\n`;
+        
+        if (trx.poin_awarded > 0) {
+            msg += `\n🎁 *Hore!* Kamu mendapatkan *+${trx.poin_awarded} Poin* dari kunjungan ini.\n`;
+        }
+        
+        msg += `\nTerima kasih telah mempercayakan perawatan salon Anda di Melly Salon! ✨\n`;
+        msg += `_Instagram: @wedding_melly_group_`;
+
+        // Redirect to wa.me
+        const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
+        window.open(waLink, '_blank');
+        
+    } catch (error) {
+        console.error(error);
+        showToast('Gagal memuat data untuk WhatsApp.', 'error');
+    }
 }
