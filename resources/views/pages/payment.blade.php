@@ -1,6 +1,10 @@
 <div class="page animate-fade-in-up" id="page-payment">
-  <div id="pay-success" class="hidden mb-6 bg-green-50 text-green-700 border border-green-200 p-4 rounded-xl shadow-sm items-center gap-3 font-medium">
-    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+  <div id="pay-success"
+    class="hidden mb-6 bg-green-50 text-green-700 border border-green-200 p-4 rounded-xl shadow-sm items-center gap-3 font-medium">
+    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
     Pembayaran berhasil! Poin telah ditambahkan ke akun member.
   </div>
 
@@ -8,7 +12,8 @@
 
     <!-- Left Column: Transaction Detail -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-fit">
-      <div class="text-lg font-bold text-gray-800 mb-5 pb-3 border-b border-gray-50 tracking-tight">Detail Transaksi</div>
+      <div class="text-lg font-bold text-gray-800 mb-5 pb-3 border-b border-gray-50 tracking-tight">Detail Transaksi
+      </div>
 
       <div class="mb-5">
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nama Pelanggan</label>
@@ -21,13 +26,19 @@
 
       <div class="mb-5">
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Pilih Layanan</label>
-        <select id="svc-sel" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all appearance-none cursor-pointer">
+        <select id="svc-sel"
+          class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all appearance-none cursor-pointer">
           <option value="">-- Pilih Layanan --</option>
         </select>
       </div>
 
-      <button class="w-full border-2 border-dashed border-gray-200 text-gray-600 font-bold py-3 rounded-xl hover:border-brand-purple hover:text-brand-purple hover:bg-brand-purple-light transition-all mb-6 focus:outline-none text-sm group flex items-center justify-center gap-2" onclick="SalonApp.addService()">
-        <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+      <button
+        class="w-full border-2 border-dashed border-gray-200 text-gray-600 font-bold py-3 rounded-xl hover:border-brand-purple hover:text-brand-purple hover:bg-brand-purple-light transition-all mb-6 focus:outline-none text-sm group flex items-center justify-center gap-2"
+        onclick="SalonApp.addService()">
+        <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-purple" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
         Tambah Layanan
       </button>
 
@@ -37,7 +48,8 @@
         <div class="hidden justify-between items-center text-sm font-semibold text-gray-600" id="order-subtotal">
           <span>Subtotal</span><span id="sub-val">Rp 0</span>
         </div>
-        <div class="hidden justify-between items-center text-sm font-bold text-gray-800 border-b border-gray-200 pb-2" id="disc-row">
+        <div class="hidden justify-between items-center text-sm font-bold text-gray-800 border-b border-gray-200 pb-2"
+          id="disc-row">
           <span>Diskon Member</span><span id="disc-val" class="text-green-600"></span>
         </div>
         <div class="flex justify-between items-center" id="grand-row">
@@ -49,18 +61,25 @@
 
     <!-- Right Column: Payment Method -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-fit">
-      <div class="text-lg font-bold text-gray-800 mb-5 pb-3 border-b border-gray-50 tracking-tight">Metode Pembayaran</div>
+      <div class="text-lg font-bold text-gray-800 mb-5 pb-3 border-b border-gray-50 tracking-tight">Metode Pembayaran
+      </div>
 
       <div class="grid grid-cols-3 gap-3 mb-8">
-        <div class="pm sel border border-brand-purple bg-brand-purple-light text-brand-purple-dark text-center py-4 rounded-xl cursor-pointer font-bold transition-all shadow-inner relative" onclick="SalonApp.selectPaymentMethod(this,'Tunai')">
+        <div
+          class="pm sel border border-brand-purple bg-brand-purple-light text-brand-purple-dark text-center py-4 rounded-xl cursor-pointer font-bold transition-all shadow-inner relative"
+          onclick="SalonApp.selectPaymentMethod(this,'Tunai')">
           <div class="text-2xl mb-1 pb-1">💵</div>
           <div class="text-xs uppercase tracking-wider">Tunai</div>
         </div>
-        <div class="pm border border-gray-200 bg-white text-gray-600 text-center py-4 rounded-xl cursor-pointer font-semibold hover:border-gray-300 hover:bg-gray-50 transition-all relative" onclick="SalonApp.selectPaymentMethod(this,'QRIS')">
+        <div
+          class="pm border border-gray-200 bg-white text-gray-600 text-center py-4 rounded-xl cursor-pointer font-semibold hover:border-gray-300 hover:bg-gray-50 transition-all relative"
+          onclick="SalonApp.selectPaymentMethod(this,'QRIS')">
           <div class="text-2xl mb-1 pb-1">📱</div>
           <div class="text-xs uppercase tracking-wider">QRIS</div>
         </div>
-        <div class="pm border border-gray-200 bg-white text-gray-600 text-center py-4 rounded-xl cursor-pointer font-semibold hover:border-gray-300 hover:bg-gray-50 transition-all relative" onclick="SalonApp.selectPaymentMethod(this,'Transfer')">
+        <div
+          class="pm border border-gray-200 bg-white text-gray-600 text-center py-4 rounded-xl cursor-pointer font-semibold hover:border-gray-300 hover:bg-gray-50 transition-all relative"
+          onclick="SalonApp.selectPaymentMethod(this,'Transfer')">
           <div class="text-2xl mb-1 pb-1">🏦</div>
           <div class="text-xs uppercase tracking-wider">Transfer</div>
         </div>
@@ -73,16 +92,25 @@
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <span class="text-gray-400 font-bold">Rp</span>
           </div>
-          <input type="number" id="cash-in" placeholder="0" class="w-full bg-gray-50 border border-gray-200 text-gray-800 font-bold text-lg rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all" oninput="SalonApp.calculateChange()">
+          <input type="number" id="cash-in" placeholder="0"
+            class="w-full bg-gray-50 border border-gray-200 text-gray-800 font-bold text-lg rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all"
+            oninput="SalonApp.calculateChange()">
         </div>
 
         <div class="flex gap-2 mb-5">
-          <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-lg text-xs transition-colors" onclick="SalonApp.setCashAmount('pas')">Uang Pas</button>
-          <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-lg text-xs transition-colors" onclick="SalonApp.setCashAmount(50000)">50.000</button>
-          <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-lg text-xs transition-colors" onclick="SalonApp.setCashAmount(100000)">100.000</button>
+          <button
+            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-lg text-xs transition-colors"
+            onclick="SalonApp.setCashAmount('pas')">Uang Pas</button>
+          <button
+            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-lg text-xs transition-colors"
+            onclick="SalonApp.setCashAmount(50000)">50.000</button>
+          <button
+            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-lg text-xs transition-colors"
+            onclick="SalonApp.setCashAmount(100000)">100.000</button>
         </div>
 
-        <div class="hidden bg-green-50 border border-green-100 rounded-xl p-4 justify-between items-center" id="change-row">
+        <div class="hidden bg-green-50 border border-green-100 rounded-xl p-4 justify-between items-center"
+          id="change-row">
           <span class="text-xs font-bold text-green-700 uppercase tracking-wide">Kembalian</span>
           <span id="change-v" class="text-lg font-black text-green-600 tracking-tight">Rp 0</span>
         </div>
@@ -98,8 +126,11 @@
           <!-- QR Code with pulse ring -->
           <div class="relative inline-block mb-4">
             <div class="absolute inset-0 rounded-2xl border-2 border-brand-purple/30 animate-ping-slow"></div>
-            <div class="bg-white border-2 border-brand-purple-light p-3 inline-block rounded-2xl shadow-sm relative z-10">
-              <img src="{{ asset('images/qris.jpeg') }}" class="w-48 h-auto block rounded-xl object-contain shadow-sm bg-white" alt="QRIS" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm\'>QR Code</div>'">
+            <div
+              class="bg-white border-2 border-brand-purple-light p-3 inline-block rounded-2xl shadow-sm relative z-10">
+              <img src="{{ asset('images/qris.jpeg') }}"
+                class="w-48 h-auto block rounded-xl object-contain shadow-sm bg-white" alt="QRIS"
+                onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm\'>QR Code</div>'">
             </div>
           </div>
 
@@ -117,7 +148,9 @@
             <div class="text-xs text-gray-400 uppercase tracking-widest mb-1">Waktu Tersisa</div>
             <div id="qris-timer" class="text-2xl font-black text-gray-800 font-mono tracking-widest">05:00</div>
             <div class="w-48 mx-auto mt-2 bg-gray-200 rounded-full h-1.5 overflow-hidden">
-              <div id="qris-timer-bar" class="h-full bg-gradient-to-r from-brand-purple to-brand-purple-dark rounded-full transition-all duration-1000" style="width: 100%"></div>
+              <div id="qris-timer-bar"
+                class="h-full bg-gradient-to-r from-brand-purple to-brand-purple-dark rounded-full transition-all duration-1000"
+                style="width: 100%"></div>
             </div>
           </div>
 
@@ -129,11 +162,18 @@
 
           <!-- Confirm button -->
           <div class="space-y-3">
-            <button id="qris-confirm-btn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transform hover:-translate-y-0.5 transition-all focus:outline-none flex justify-center items-center gap-2" onclick="SalonApp.confirmQrisPayment()">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <button id="qris-confirm-btn"
+              class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transform hover:-translate-y-0.5 transition-all focus:outline-none flex justify-center items-center gap-2"
+              onclick="SalonApp.confirmQrisPayment()">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
               Konfirmasi Pembayaran Diterima
             </button>
-            <button class="w-full bg-white border border-gray-200 text-gray-500 font-semibold py-2.5 px-6 rounded-xl hover:bg-gray-50 transition-all focus:outline-none text-sm" onclick="SalonApp.cancelQrisPayment()">
+            <button
+              class="w-full bg-white border border-gray-200 text-gray-500 font-semibold py-2.5 px-6 rounded-xl hover:bg-gray-50 transition-all focus:outline-none text-sm"
+              onclick="SalonApp.cancelQrisPayment()">
               Batalkan
             </button>
           </div>
@@ -143,7 +183,8 @@
         <div id="qris-success" class="hidden text-center bg-emerald-50 rounded-2xl p-8 border border-emerald-200">
           <div class="qris-success-checkmark mx-auto mb-4">
             <svg class="w-20 h-20 text-emerald-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path class="qris-check-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path class="qris-check-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
           <div class="text-2xl font-black text-emerald-700 mb-2">Pembayaran QRIS Berhasil! ✅</div>
@@ -156,31 +197,46 @@
       <!-- TRANSFER SECTION -->
       <div id="transfer-section" class="hidden mb-8 space-y-3">
         <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex flex-col gap-1">
-          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">BCA — Melly Salon</div>
+          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">BCA — NOFI ARDIMAN WIDJAYA</div>
           <div class="flex justify-between items-center">
-            <div class="font-mono text-lg font-bold tracking-widest text-gray-800">0123456789</div>
-            <button class="text-xs font-bold bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 hover:text-brand-purple hover:border-brand-purple transition-all shadow-sm" onclick="SalonApp.copyAccountNumber('0123456789')">Salin</button>
+            <div class="font-mono text-lg font-bold tracking-widest text-gray-800">8761249240</div>
+            <button
+              class="text-xs font-bold bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 hover:text-brand-purple hover:border-brand-purple transition-all shadow-sm"
+              onclick="SalonApp.copyAccountNumber('8761249240')">Salin</button>
           </div>
         </div>
 
         <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex flex-col gap-1">
-          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">Mandiri — Siti Aminah</div>
+          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">BCA — MIMIN BT H ARDIMAN</div>
           <div class="flex justify-between items-center">
-            <div class="font-mono text-lg font-bold tracking-widest text-gray-800">1330001122334</div>
-            <button class="text-xs font-bold bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 hover:text-brand-purple hover:border-brand-purple transition-all shadow-sm" onclick="SalonApp.copyAccountNumber('1330001122334')">Salin</button>
+            <div class="font-mono text-lg font-bold tracking-widest text-gray-800">6880386326</div>
+            <button
+              class="text-xs font-bold bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 hover:text-brand-purple hover:border-brand-purple transition-all shadow-sm"
+              onclick="SalonApp.copyAccountNumber('6880386326')">Salin</button>
           </div>
         </div>
 
         <div class="flex items-start gap-2 bg-brand-gold-light/50 border border-brand-gold/20 p-3 rounded-lg mt-4">
-          <svg class="w-4 h-4 text-brand-gold flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <span class="text-xs font-medium text-gray-700 leading-relaxed">Pastikan pembayaran telah masuk ke rekening sebelum klik tombol Proses Pembayaran.</span>
+          <svg class="w-4 h-4 text-brand-gold flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-xs font-medium text-gray-700 leading-relaxed">Pastikan pembayaran telah masuk ke rekening
+            sebelum klik tombol Proses Pembayaran.</span>
         </div>
       </div>
 
-      <div class="text-xs font-medium text-brand-purple bg-brand-purple-light px-4 py-2 rounded-lg mb-6 hidden" id="poin-preview"></div>
+      <div class="text-xs font-medium text-brand-purple bg-brand-purple-light px-4 py-2 rounded-lg mb-6 hidden"
+        id="poin-preview"></div>
 
-      <button class="w-full bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-brand-purple/30 hover:shadow-xl hover:shadow-brand-purple/40 transform hover:-translate-y-0.5 transition-all focus:outline-none flex justify-center items-center gap-2" onclick="SalonApp.processPayment()">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <button
+        class="w-full bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-brand-purple/30 hover:shadow-xl hover:shadow-brand-purple/40 transform hover:-translate-y-0.5 transition-all focus:outline-none flex justify-center items-center gap-2"
+        onclick="SalonApp.processPayment()">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
         Proses Pembayaran
       </button>
     </div>

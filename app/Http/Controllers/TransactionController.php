@@ -47,8 +47,9 @@ class TransactionController extends Controller
 
         // Validasi diskon jika member
         $discountAmount = 0;
-        if (!empty($validatedData['member_id'])) {
-            $member = Member::find($validatedData['member_id']);
+        $memberId = $validatedData['member_id'] ?? null;
+        if (!empty($memberId)) {
+            $member = Member::find($memberId);
             if ($member) {
                 $discountPercent = $member->getDiscountPercent();
                 $discountAmount = (int) round($calculatedSubtotal * $discountPercent / 100);
@@ -92,8 +93,9 @@ class TransactionController extends Controller
             }
 
             // Update data member jika ada
-            if (!empty($validatedData['member_id'])) {
-                $member = Member::find($validatedData['member_id']);
+            $memberId = $validatedData['member_id'] ?? null;
+            if (!empty($memberId)) {
+                $member = Member::find($memberId);
                 if ($member) {
                     $member->poin += $transaction->poin_awarded;
                     $member->total_visits += 1;

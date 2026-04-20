@@ -41,31 +41,13 @@
   </div>
 
   <!-- Main Content Row -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-    <!-- Antrian Card -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col h-full">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-bold text-gray-800">Antrian Hari Ini</h3>
-        <span class="bg-brand-purple-light text-brand-purple-dark text-xs font-bold px-3 py-1 rounded-full">Live</span>
-      </div>
-
-      <div class="flex-1" id="queue-list">
-        <div class="flex flex-col items-center justify-center py-12 text-center text-gray-400">
-          <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-            <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </div>
-          <p class="text-sm font-medium text-gray-500">Belum ada antrian hari ini.</p>
-          <p class="text-xs mt-1">Tambahkan transaksi baru untuk memulai antrian.</p>
-        </div>
-      </div>
-    </div>
+  <div class="grid grid-cols-1 gap-6">
 
     <!-- Chart & Top Services -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col h-full">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-bold text-gray-800">Performa</h3>
-        <button class="text-sm text-brand-purple hover:underline font-medium" onclick="SalonApp.goPage('report', document.querySelectorAll('.ni')[4])">Lihat Laporan</button>
+        <button class="text-sm text-brand-purple hover:underline font-medium" onclick="SalonApp.goPage('report', document.querySelectorAll('.ni')[5])">Lihat Laporan</button>
       </div>
 
       <div class="mb-8">
